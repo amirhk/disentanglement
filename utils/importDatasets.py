@@ -328,6 +328,9 @@ def importSvhn():
   y_train = meta_train['y'] - 1
   y_test = meta_test['y'] - 1
 
+  y_train = np.mod(y_train + 1, 10) # to get them consistent with mnist (i.e., label 0 is for class 0)
+  y_test = np.mod(y_test + 1, 10) # to get them consistent with mnist (i.e., label 0 is for class 0)
+
   # # so far we've read in .mat files.. but this ordering needs to be cleaned up
   # x_train = np.zeros((tmp_x_train.shape[3], tmp_x_train.shape[0], tmp_x_train.shape[1], tmp_x_train.shape[2]))
   # for t in range(tmp_x_train.shape[3]):
