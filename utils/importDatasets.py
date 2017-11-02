@@ -207,6 +207,54 @@ def importDatasetForSemisupervisedTraining(dataset_string, number_of_labeled_tra
 
 
 
+def importMnistAndSvhn():
+  fh_data_importer_1 = lambda : importMnist()
+  fh_data_importer_2 = lambda : importSvhn()
+
+  (dataset_name_1, x_train_1, x_test_1, y_train_1, y_test_1, sample_dim_1, sample_channels_1, original_dim_1, num_classes_1) = fh_data_importer_1()
+  (dataset_name_2, x_train_2, x_test_2, y_train_2, y_test_2, sample_dim_2, sample_channels_2, original_dim_2, num_classes_2) = fh_data_importer_2()
+
+  y_train_1 = np.argmax(y_train_1, axis =1)
+  y_train_2 = np.argmax(y_train_2, axis =1)
+
+  unique_classes_1 = np.unique(y_train_1);
+  unique_classes_2 = np.unique(y_train_2);
+
+  assert(len(unique_classes_1) == len(unique_classes_2))
+  num_classes = num_classes_1
+
+  count_from_each_class = 4500
+
+  ordered_indices_dataset_1 = np.array(())
+  ordered_indices_dataset_2 = np.array(())
+
+  for i in range(len(unique_classes_2)):
+    print('\t[INFO] found %d samples of class %d in dataset 1' % (len(np.where(y_train_1 == i)[0]), i))
+    print('\t[INFO] found %d samples of class %d in dataset 2' % (len(np.where(y_train_2 == i)[0]), i))
+    print('')
+    ordered_indices_dataset_1 = np.concatenate((ordered_indices_dataset_1, np.where(y_train_1 == i)[0][:count_from_each_class]), axis = 0)
+    ordered_indices_dataset_2 = np.concatenate((ordered_indices_dataset_2, np.where(y_train_2 == i)[0][:count_from_each_class]), axis = 0)
+
+  assert(ordered_indices_dataset_1.shape == ordered_indices_dataset_2.shape)
+
+  random_ordering = np.random.permutation(ordered_indices_dataset_1.shape[0])
+  unordered_indices_dataset_1 = ordered_indices_dataset_1[random_ordering]
+  unordered_indices_dataset_2 = ordered_indices_dataset_2[random_ordering]
+
+  unordered_indices_dataset_1 = unordered_indices_dataset_1.astype(int)
+  unordered_indices_dataset_2 = unordered_indices_dataset_2.astype(int)
+
+  x_train_1 = x_train_1[unordered_indices_dataset_1,:]
+  x_train_2 = x_train_2[unordered_indices_dataset_2,:]
+  y_train_1 = y_train_1[unordered_indices_dataset_1]
+  y_train_2 = y_train_2[unordered_indices_dataset_2]
+
+  assert(set(y_train_1 == y_train_2) == {True})
+  y_train = y_train_1 # = y_train_2
+
+  return (dataset_name_1, dataset_name_2, x_train_1, x_train_2, y_train, x_test_1, y_test_1, x_test_2, y_test_2, num_classes)
+
+
 
 def importMnist():
   print('[INFO] importing mnist-digits...')
@@ -231,10 +279,6 @@ def importMnist():
   print('[INFO] done.')
 
   return ('mnist', x_train, x_test, y_train, y_test, sample_dim, sample_channels, original_dim, num_classes)
-
-
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-
 
 def importCifar():
   print('[INFO] importing cifar...')
@@ -275,20 +319,26 @@ def importSvhn():
   meta_train = sio.loadmat(os.path.join(dirname, '..', 'data', 'svhn', 'train_32x32.mat'))
   meta_test = sio.loadmat(os.path.join(dirname, '..', 'data', 'svhn', 'test_32x32.mat'))
 
+  meta_train = sio.loadmat(os.path.join('/', 'Users', 'a6karimi', 'dev', 'tensorflow', 'disentanglement', 'data', 'svhn', 'train_32x32.mat'))
+  meta_test = sio.loadmat(os.path.join('/', 'Users', 'a6karimi', 'dev', 'tensorflow', 'disentanglement', 'data', 'svhn', 'test_32x32.mat'))
+
   tmp_x_train = meta_train['X']
   tmp_x_test = meta_test['X']
 
   y_train = meta_train['y'] - 1
   y_test = meta_test['y'] - 1
 
-  # so far we've read in .mat files.. but this ordering needs to be cleaned up
-  x_train = np.zeros((tmp_x_train.shape[3], tmp_x_train.shape[0], tmp_x_train.shape[1], tmp_x_train.shape[2]))
-  for t in range(tmp_x_train.shape[3]):
-      x_train[t,:,:,:] = tmp_x_train[:,:,:,t]
+  # # so far we've read in .mat files.. but this ordering needs to be cleaned up
+  # x_train = np.zeros((tmp_x_train.shape[3], tmp_x_train.shape[0], tmp_x_train.shape[1], tmp_x_train.shape[2]))
+  # for t in range(tmp_x_train.shape[3]):
+  #     x_train[t,:,:,:] = tmp_x_train[:,:,:,t]
 
-  x_test = np.zeros((tmp_x_test.shape[3], tmp_x_test.shape[0], tmp_x_test.shape[1], tmp_x_test.shape[2]))
-  for t in range(tmp_x_test.shape[3]):
-      x_test[t,:,:,:] = tmp_x_test[:,:,:,t]
+  # x_test = np.zeros((tmp_x_test.shape[3], tmp_x_test.shape[0], tmp_x_test.shape[1], tmp_x_test.shape[2]))
+  # for t in range(tmp_x_test.shape[3]):
+  #     x_test[t,:,:,:] = tmp_x_test[:,:,:,t]
+
+  x_train = tmp_x_train.transpose(3,0,1,2)
+  x_test = tmp_x_test.transpose(3,0,1,2)
 
   # other processing
   x_train = x_train.astype('float32') / 255.
