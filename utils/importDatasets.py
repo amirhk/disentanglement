@@ -251,6 +251,7 @@ def importMnistAndSvhn():
 
   assert(set(y_train_1 == y_train_2) == {True})
   y_train = y_train_1 # = y_train_2
+  y_train = utils.to_categorical(y_train, num_classes)
 
   return (dataset_name_1, dataset_name_2, x_train_1, x_train_2, y_train, x_test_1, y_test_1, x_test_2, y_test_2, num_classes)
 
