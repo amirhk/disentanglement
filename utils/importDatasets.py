@@ -319,8 +319,8 @@ def importSvhn():
   meta_train = sio.loadmat(os.path.join(dirname, '..', 'data', 'svhn', 'train_32x32.mat'))
   meta_test = sio.loadmat(os.path.join(dirname, '..', 'data', 'svhn', 'test_32x32.mat'))
 
-  meta_train = sio.loadmat(os.path.join('/', 'Users', 'a6karimi', 'dev', 'tensorflow', 'disentanglement', 'data', 'svhn', 'train_32x32.mat'))
-  meta_test = sio.loadmat(os.path.join('/', 'Users', 'a6karimi', 'dev', 'tensorflow', 'disentanglement', 'data', 'svhn', 'test_32x32.mat'))
+  # meta_train = sio.loadmat(os.path.join('/', 'Users', 'a6karimi', 'dev', 'tensorflow', 'disentanglement', 'data', 'svhn', 'train_32x32.mat'))
+  # meta_test = sio.loadmat(os.path.join('/', 'Users', 'a6karimi', 'dev', 'tensorflow', 'disentanglement', 'data', 'svhn', 'test_32x32.mat'))
 
   tmp_x_train = meta_train['X']
   tmp_x_test = meta_test['X']
