@@ -253,7 +253,7 @@ class RECONSTRUCTION(Callback):
 
         ax = plt.subplot(1,2,1)
         x_samples = x_test_2
-        canvas = getFigureOfSamplesForInput(x_samples, 32, number_of_sample_images)
+        canvas = self.getFigureOfSamplesForInput(x_samples, 32, number_of_sample_images)
         plt.imshow(canvas)
         ax.set_title('Original Test Images', fontsize=8)
         ax.get_xaxis().set_visible(False)
@@ -261,7 +261,7 @@ class RECONSTRUCTION(Callback):
 
         ax = plt.subplot(1,2,2)
         x_samples = reconstructed_x_test_2
-        canvas = getFigureOfSamplesForInput(x_samples, 32, number_of_sample_images)
+        canvas = self.getFigureOfSamplesForInput(x_samples, 32, number_of_sample_images)
         plt.imshow(canvas)
         ax.set_title('Reconstructed Test Images', fontsize=8)
         ax.get_xaxis().set_visible(False)
