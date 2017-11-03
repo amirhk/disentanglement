@@ -95,17 +95,17 @@ def build_z(args):
 
 ########## Autoencoder 1 Network ########################################################################
 
-x_1 = Input(batch_shape=(batch_size, original_dim_1))
-x_reshaped_1 = Reshape((28,28,1))
-h_e_1_1 = Conv2D(32, (3, 3), activation='relu', padding='same')
-h_e_1_2 = MaxPooling2D((2, 2), padding='same')
-h_e_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
-h_e_1_4 = MaxPooling2D((2, 2), padding='same')
-h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
-h_e_1_6 = MaxPooling2D((2, 2), padding='same')
-h_e_1_7 = Flatten()
+# x_1 = Input(batch_shape=(batch_size, original_dim_1))
+# x_reshaped_1 = Reshape((28,28,1))
+# h_e_1_1 = Conv2D(32, (3, 3), activation='relu', padding='same')
+# h_e_1_2 = MaxPooling2D((2, 2), padding='same')
+# h_e_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
+# h_e_1_4 = MaxPooling2D((2, 2), padding='same')
+# h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
+# h_e_1_6 = MaxPooling2D((2, 2), padding='same')
+# h_e_1_7 = Flatten()
 
-z_1 = Dense(latent_dim_x_1)
+# z_1 = Dense(latent_dim_x_1)
 
 ####### Autoencoder 2 Network ###########################################################################
 
@@ -132,21 +132,21 @@ h_d_y_5 = Dense(intermediate_dim, activation='relu')
 h_d_y_6 = Dropout(0.5)
 y_decoded = Dense(10, activation='softmax')
 
-yy_1 = Input(batch_shape = (batch_size, 10))
+# yy_1 = Input(batch_shape = (batch_size, 10))
 yy_2 = Input(batch_shape = (batch_size, 10))
 
 ##### Build model 1 #####################################################################################
 
-_x_reshaped_1 = x_reshaped_1(x_1)
-_h_e_1_1 = h_e_1_1(_x_reshaped_1)
-_h_e_1_2 = h_e_1_2(_h_e_1_1)
-_h_e_1_3 = h_e_1_3(_h_e_1_2)
-_h_e_1_4 = h_e_1_4(_h_e_1_3)
-_h_e_1_5 = h_e_1_5(_h_e_1_4)
-_h_e_1_6 = h_e_1_6(_h_e_1_5)
-_h_e_1_7 = h_e_1_7(_h_e_1_6)
+# _x_reshaped_1 = x_reshaped_1(x_1)
+# _h_e_1_1 = h_e_1_1(_x_reshaped_1)
+# _h_e_1_2 = h_e_1_2(_h_e_1_1)
+# _h_e_1_3 = h_e_1_3(_h_e_1_2)
+# _h_e_1_4 = h_e_1_4(_h_e_1_3)
+# _h_e_1_5 = h_e_1_5(_h_e_1_4)
+# _h_e_1_6 = h_e_1_6(_h_e_1_5)
+# _h_e_1_7 = h_e_1_7(_h_e_1_6)
 
-_z_1 = z_1(_h_e_1_7)
+# _z_1 = z_1(_h_e_1_7)
 
 ##### Build model 2 #####################################################################################
 
@@ -164,13 +164,13 @@ _z_2 = z_2(_h_e_2_8)
 
 ##### Build Classifier ##################################################################################
 
-_h_d_y_1_1 = h_d_y_1(_z_1)
-_h_d_y_1_2 = h_d_y_2(_h_d_y_1_1)
-_h_d_y_1_3 = h_d_y_3(_h_d_y_1_2)
-_h_d_y_1_4 = h_d_y_4(_h_d_y_1_3)
-_h_d_y_1_5 = h_d_y_5(_h_d_y_1_4)
-_h_d_y_1_6 = h_d_y_6(_h_d_y_1_5)
-_y_decoded_1 = y_decoded(_h_d_y_1_6)
+# _h_d_y_1_1 = h_d_y_1(_z_1)
+# _h_d_y_1_2 = h_d_y_2(_h_d_y_1_1)
+# _h_d_y_1_3 = h_d_y_3(_h_d_y_1_2)
+# _h_d_y_1_4 = h_d_y_4(_h_d_y_1_3)
+# _h_d_y_1_5 = h_d_y_5(_h_d_y_1_4)
+# _h_d_y_1_6 = h_d_y_6(_h_d_y_1_5)
+# _y_decoded_1 = y_decoded(_h_d_y_1_6)
 
 _h_d_y_2_1 = h_d_y_1(_z_2)
 _h_d_y_2_2 = h_d_y_2(_h_d_y_2_1)
@@ -183,9 +183,10 @@ _y_decoded_2 = y_decoded(_h_d_y_2_6)
 ###### Define Loss ######################################################################################
 
 def vae_loss(x, _x_decoded):
-    y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
+    # y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
     y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
-    return y_loss_1 + y_loss_2
+    # return y_loss_1 + y_loss_2
+    return y_loss_2
 
 # model = Model(inputs = [x_1, x_2, yy_1, yy_2],outputs = [_y_decoded_1, _y_decoded_2])
 # model = Model(inputs = [x_1, yy_1],outputs = [_y_decoded_1])
@@ -197,7 +198,7 @@ model.compile(optimizer=my_adam, loss=vae_loss)
 ############################################################################
 #### Build another model (NO NEED) #########################################
 
-_y_decoded_1_ = _y_decoded_1
+# _y_decoded_1_ = _y_decoded_1
 _y_decoded_2_ = _y_decoded_2
 
 # vaeencoder = Model(inputs = [x_1, x_2], outputs = [_y_decoded_1_, _y_decoded_2_])
@@ -271,13 +272,11 @@ def scheduler(epoch):
 
 change_lr = LearningRateScheduler(scheduler)
 
-# model.fit([np.tile(x_train_1[:100,:], (400,1)), x_train_2, np.tile(y_train[:100], (400,1)), y_train], [y_train, y_train],
-model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
-model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
+model.fit([x_train_2, y_train], [y_train],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
-        validation_data =([x_val_1, x_val_2, y_val, y_val], [y_val, y_val]),
+        validation_data =([x_val_2, y_val], [y_val]),
         callbacks = [accuracy, change_lr])
 
 model_weights = model.get_weights()
