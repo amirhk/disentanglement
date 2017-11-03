@@ -38,6 +38,10 @@ from importDatasets import importMnistAndSvhn
 
 
 training_size = 40000
+
+x_train_1 = x_train_2
+
+
 x_val_1 = x_train_1[training_size:,:]
 x_train_1 =x_train_1[:training_size,:]
 
@@ -48,8 +52,8 @@ y_train = y_train[:training_size,:]
 x_val_2 = x_train_2[training_size:,:]
 x_train_2 =x_train_2[:training_size,:]
 
-x_test_2 = x_test_2[:10000,:]
-y_test_2 = y_test_2[:10000,:]
+x_test_1 = x_test_2[:10000,:]
+y_test_1 = y_test_2[:10000,:]
 
 
  
@@ -59,7 +63,7 @@ latent_dim_y = 10
 epochs = 50
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.0001
+learning_rate = 0.001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -84,13 +88,13 @@ os.makedirs(experiment_dir_path)
 
 ########## Autoencoder 1 Network ########################################################
 
-x_1 = Input(batch_shape=(batch_size, original_dim_1))
-x_reshaped_1 = Reshape((28,28,1))
-h_e_1_1 = Conv2D(16, (3, 3), activation='relu', padding='same')
+x_1 = Input(batch_shape=(batch_size, original_dim_2))
+x_reshaped_1 = Reshape((32,32,3))
+h_e_1_1 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_1_2 = MaxPooling2D((2, 2), padding='same')
-h_e_1_3 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_1_3 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_1_4 = MaxPooling2D((2, 2), padding='same')
-h_e_1_5 = Conv2D(8, (3, 3), activation='relu', padding='same')
+h_e_1_5 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_e_1_6 = MaxPooling2D((2, 2), padding='same')
 h_e_1_7 = Flatten()
 
@@ -114,13 +118,13 @@ def build_z(args):
 
 h_d_x_1_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_1_2 = Reshape((4,4,8))
-h_d_x_1_3 = Conv2D(8, (3, 3), activation='relu', padding='same')
+h_d_x_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_d_x_1_4 = UpSampling2D((2, 2))
-h_d_x_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_d_x_1_5 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_1_6 = UpSampling2D((2, 2))
-h_d_x_1_7 = Conv2D(16, (3, 3), activation='relu')
+h_d_x_1_7 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_1_8 = UpSampling2D((2, 2))
-x_decoded_reshaped_1 = Conv2D(1, (3, 3), activation='sigmoid', padding='same')
+x_decoded_reshaped_1 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
 x_decoded_1 = Flatten()
 
 
@@ -354,8 +358,8 @@ class ACCURACY(Callback):
 
 accuracy = ACCURACY()
 
-model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'rb'))
-model.set_weights(model_weights)
+#model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'rb'))
+#model.set_weights(model_weights)
 
 model.fit([x_train_1, y_train],[x_train_1,y_train],
         shuffle=True,
