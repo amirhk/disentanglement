@@ -275,7 +275,7 @@ reconstruction = RECONSTRUCTION()
 
 
 def scheduler(epoch):
-    if epoch == 1:
+    if epoch == 0:
         model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
     elif epoch == 25:
         model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
