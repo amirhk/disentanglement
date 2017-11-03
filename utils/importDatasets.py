@@ -209,8 +209,8 @@ def importDatasetForSemisupervisedTraining(dataset_string, number_of_labeled_tra
 
 def importMnistAndSvhn():
   fh_data_importer_1 = lambda : importMnist()
-  # fh_data_importer_2 = lambda : importSvhn()
-  fh_data_importer_2 = lambda : importMnist()
+  fh_data_importer_2 = lambda : importSvhn()
+  # fh_data_importer_2 = lambda : importMnist()
 
   (dataset_name_1, x_train_1, x_test_1, y_train_1, y_test_1, sample_dim_1, sample_channels_1, original_dim_1, num_classes_1) = fh_data_importer_1()
   (dataset_name_2, x_train_2, x_test_2, y_train_2, y_test_2, sample_dim_2, sample_channels_2, original_dim_2, num_classes_2) = fh_data_importer_2()
