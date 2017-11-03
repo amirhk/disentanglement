@@ -121,11 +121,11 @@ x_decoded_1 = Flatten()
 
 x_2 = Input(batch_shape=(batch_size, original_dim_2))
 x_reshaped_2 = Reshape((32,32,3))
-h_e_2_1 = Conv2D(16, (3, 3), activation='relu', padding='same') # Conv2D(64, (3, 3), activation='relu', padding='same')
+h_e_2_1 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_2_2 = MaxPooling2D((2, 2), padding='same')
-h_e_2_3 = Conv2D(16, (3, 3), activation='relu', padding='same') # Conv2D(64, (3, 3), activation='relu', padding='same')
+h_e_2_3 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_2_4 = MaxPooling2D((2, 2), padding='same')
-h_e_2_5 = Conv2D(8, (3, 3), activation='relu', padding='same') # Conv2D(32, (3, 3), activation='relu', padding='same')
+h_e_2_5 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_e_2_6 = MaxPooling2D((2, 2), padding='same')
 h_e_2_7 = Flatten()
 
@@ -135,11 +135,11 @@ z_log_var_2 = Dense(latent_dim)
 
 h_d_x_2_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_2_2 = Reshape((4,4,8))
-h_d_x_2_3 = Conv2D(8, (3, 3), activation='relu', padding='same') # Conv2D(32, (3, 3), activation='relu', padding='same')
+h_d_x_2_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_d_x_2_4 = UpSampling2D((2, 2))
-h_d_x_2_5 = Conv2D(16, (3, 3), activation='relu', padding='same') # Conv2D(64, (3, 3), activation='relu', padding='same')
+h_d_x_2_5 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_2_6 = UpSampling2D((2, 2))
-h_d_x_2_7 = Conv2D(16, (3, 3), activation='relu', padding='same') # Conv2D(64, (3, 3), activation='relu', padding='same')
+h_d_x_2_7 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_2_8 = UpSampling2D((2, 2))
 x_decoded_reshaped_2 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
 x_decoded_2 = Flatten()
@@ -289,7 +289,7 @@ _h_e_2_6_ = h_e_2_6(_h_e_2_5_)
 _h_e_2_7_ = h_e_2_7(_h_e_2_6_)
 
 
-_z_mean_2_ = z_mean_1(_h_e_2_7_)
+_z_mean_2_ = z_mean_2(_h_e_2_7_)
 
 
 _h_d_x_2_1_ = h_d_x_2_1(_z_mean_2_)
