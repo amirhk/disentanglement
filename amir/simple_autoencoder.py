@@ -276,12 +276,12 @@ reconstruction = RECONSTRUCTION()
 
 def scheduler(epoch):
     if epoch == 1:
-        model.optimizer.lr.set_value(0.001)
+        model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
     elif epoch == 25:
-        model.optimizer.lr.set_value(0.0003)
+        model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
     elif epoch == 50:
-        model.optimizer.lr.set_value(0.0001)
-    return model.optimizer.lr.get_value()
+        model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
+    return model.optimizer.lr # return model.lr.get_value()
 
 change_lr = LearningRateScheduler(scheduler)
 
