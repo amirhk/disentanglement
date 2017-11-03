@@ -120,7 +120,8 @@ x_decoded_1 = Flatten()
 ###### Autoencoder 2 Network ###########################################################
 
 x_2 = Input(batch_shape=(batch_size, original_dim_2))
-x_reshaped_2 = Reshape((32,32,3))
+# x_reshaped_2 = Reshape((32,32,3))
+x_reshaped_2 = Reshape((28,28,1))
 h_e_2_1 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_2_2 = MaxPooling2D((2, 2), padding='same')
 h_e_2_3 = Conv2D(64, (3, 3), activation='relu', padding='same')
@@ -138,9 +139,10 @@ h_d_x_2_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_d_x_2_4 = UpSampling2D((2, 2))
 h_d_x_2_5 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_2_6 = UpSampling2D((2, 2))
-h_d_x_2_7 = Conv2D(64, (3, 3), activation='relu', padding='same')
+h_d_x_2_7 = Conv2D(64, (3, 3), activation='relu')
 h_d_x_2_8 = UpSampling2D((2, 2))
-x_decoded_reshaped_2 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
+# x_decoded_reshaped_2 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
+x_decoded_reshaped_2 = Conv2D(1, (3, 3), activation='sigmoid', padding='same')
 x_decoded_2 = Flatten()
 
 ## Classifier Network ##############################################################
@@ -374,7 +376,8 @@ class RECONSTRUCTION(Callback):
           for j in range(tmp):
             ax = plt.subplot(tmp, tmp, i*tmp+j+1)
             # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-            plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
+            # plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
+            plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(28,28))
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
         plt.savefig(image_file_name_2)
