@@ -245,7 +245,7 @@ class ACCURACY(Callback):
         lll_2 = np.reshape(lll_2, (len(not_hot_y_test_1),))
         n_error_2 = np.count_nonzero(lll_2 - not_hot_y_test_2)
         ACC_2 = 1 - n_error_2 / len(not_hot_y_test_1)
-        Accuracy[ii,:] = [ACC_1 , ACC_2]
+        Accuracy[ii,:] = [-1 , ACC_2]
         print('\n accuracy_svhn = ', ACC_2)
         ii = ii + 1
         pickle.dump((ii),open('counter', 'wb'))
