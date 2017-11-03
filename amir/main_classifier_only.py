@@ -51,7 +51,7 @@ y_test_2 = y_test_2[:10000,:]
 
 
 batch_size = 100
-latent_dim_x_1 =5
+latent_dim_x_1 = 10
 latent_dim_x_2 = 10
 latent_dim_y = 10
 epochs = 1000
@@ -164,7 +164,7 @@ _z_2 = z_2(_h_e_2_8)
 
 ##### Build Classifier ##################################################################################
 
-_h_d_y_1_1 = h_d_y_1(z_1)
+_h_d_y_1_1 = h_d_y_1(_z_1)
 _h_d_y_1_2 = h_d_y_2(_h_d_y_1_1)
 _h_d_y_1_3 = h_d_y_3(_h_d_y_1_2)
 _h_d_y_1_4 = h_d_y_4(_h_d_y_1_3)
@@ -172,7 +172,7 @@ _h_d_y_1_5 = h_d_y_5(_h_d_y_1_4)
 _h_d_y_1_6 = h_d_y_6(_h_d_y_1_5)
 _y_decoded_1 = y_decoded(_h_d_y_1_6)
 
-_h_d_y_2_1 = h_d_y_1(z_2)
+_h_d_y_2_1 = h_d_y_1(_z_2)
 _h_d_y_2_2 = h_d_y_2(_h_d_y_2_1)
 _h_d_y_2_3 = h_d_y_3(_h_d_y_2_2)
 _h_d_y_2_4 = h_d_y_4(_h_d_y_2_3)
