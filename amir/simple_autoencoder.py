@@ -204,6 +204,17 @@ model.compile(optimizer=my_adam, loss=ae_loss)
 
 class RECONSTRUCTION(Callback):
 
+
+    def getFigureOfSamplesForInput(self, x_samples, sample_dim, number_of_sample_images, grid_x=range(10), grid_y=range(10)):
+        figure = np.zeros((sample_dim * number_of_sample_images, sample_dim * number_of_sample_images, 3))
+        for i in range(number_of_sample_images):
+            for j in range(number_of_sample_images):
+                digit = x_samples[i * number_of_sample_images + j, :].reshape(sample_dim, sample_dim, 3)
+                figure[i * sample_dim: (i + 1) * sample_dim,
+                       j * sample_dim: (j + 1) * sample_dim, :] = digit
+        return figure
+
+
     def on_epoch_end(self,batch,logs = {}):
 
         timestamp_string = str(datetime.now().strftime('%Y-%m-%d_____%H-%M-%S'))
@@ -258,16 +269,6 @@ class RECONSTRUCTION(Callback):
 
         plt.savefig(image_file_name_2)
         plt.close('all')
-
-
-    def getFigureOfSamplesForInput(self, x_samples, sample_dim, number_of_sample_images, grid_x=range(10), grid_y=range(10)):
-        figure = np.zeros((sample_dim * number_of_sample_images, sample_dim * number_of_sample_images, 3))
-        for i in range(number_of_sample_images):
-            for j in range(number_of_sample_images):
-                digit = x_samples[i * number_of_sample_images + j, :].reshape(sample_dim, sample_dim, 3)
-                figure[i * sample_dim: (i + 1) * sample_dim,
-                       j * sample_dim: (j + 1) * sample_dim, :] = digit
-        return figure
 
 
 reconstruction = RECONSTRUCTION()
