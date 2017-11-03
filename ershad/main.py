@@ -361,8 +361,44 @@ class ACCURACY(Callback):
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
           print('Epoch #{} Accuracy:{} \n'.format(ii, ACC), file=text_file)
+          
 
 accuracy = ACCURACY()
+
+
+class RECONSTRUCTION(Callback):
+
+    def on_epoch_end(self,batch,logs = {}):
+
+        timestamp_string = str(datetime.now().strftime('%Y-%m-%d_____%H-%M-%S'))
+        image_file_name_1 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_1.png'
+        image_file_name_2 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_2.png'
+
+        reconstructed_x_test_1, reconstructed_x_test_2, _ = vaeencoder.predict([x_test_1,x_test_2], batch_size = batch_size)
+
+        tmp = 4
+        plt.figure(figsize=(tmp + 1, tmp + 1))
+        for i in range(tmp):
+          for j in range(tmp):
+            ax = plt.subplot(tmp, tmp, i*tmp+j+1)
+            # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
+            plt.imshow(reconstructed_x_test_1[i*tmp+j].reshape(28,28))
+            ax.get_xaxis().set_visible(False)
+            ax.get_yaxis().set_visible(False)
+        plt.savefig(image_file_name_1)
+
+        tmp = 4
+        plt.figure(figsize=(tmp + 1, tmp + 1))
+        for i in range(tmp):
+          for j in range(tmp):
+            ax = plt.subplot(tmp, tmp, i*tmp+j+1)
+            # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
+            plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
+            ax.get_xaxis().set_visible(False)
+            ax.get_yaxis().set_visible(False)
+        plt.savefig(image_file_name_2)
+
+reconstruction = RECONSTRUCTION()
 #
 #model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'rb'))
 #model.set_weights(model_weights)
@@ -372,7 +408,7 @@ model.fit([x_train_1,x_train_2, y_train],[x_train_1,x_train_2,y_train],
         epochs=epochs,
         batch_size=batch_size,
         validation_data =([x_val_1,x_val_2,y_val],[x_val_1,x_val_2,y_val]),
-        callbacks = [accuracy])
+        callbacks = [accuracy,reconstruction])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'wb'))
