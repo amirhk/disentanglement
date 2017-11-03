@@ -246,7 +246,7 @@ class ACCURACY(Callback):
         n_error_2 = np.count_nonzero(lll_2 - not_hot_y_test_2)
         ACC_2 = 1 - n_error_2 / len(not_hot_y_test_1)
         Accuracy[ii,:] = [-1 , ACC_2]
-        print('\n accuracy_svhn = ', ACC_2)
+        print('\n accuracy_svhn = \n\n', ACC_2)
         ii = ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
@@ -265,7 +265,7 @@ def scheduler(epoch):
     # return float(model.optimizer.lr) # return model.lr.get_value()
     if epoch > 250:
         return float(0.00001)
-    if epoch > 100:
+    if epoch > 50:
         return float(0.00003)
     else:
         return float(0.0001) # initial_lrate
