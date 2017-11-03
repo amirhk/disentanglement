@@ -223,7 +223,7 @@ def importMnistAndSvhn():
   assert(len(unique_classes_1) == len(unique_classes_2))
   num_classes = num_classes_1
 
-  count_from_each_class = 4500
+  count_from_each_class = 50
 
   ordered_indices_dataset_1 = np.array(())
   ordered_indices_dataset_2 = np.array(())
