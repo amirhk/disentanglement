@@ -36,13 +36,11 @@ from importDatasets import importMnistAndSvhn
      x_train_2, y_train, x_test_1, y_test_1,
      x_test_2, y_test_2, num_classes) = importMnistAndSvhn()
 
-
 training_size = 40000
 x_val_1 = x_train_1[training_size:,:]
 x_train_1 =x_train_1[:training_size,:]
 
 y_val = y_train[training_size:,:]
-
 y_train = y_train[:training_size,:]
 
 x_val_2 = x_train_2[training_size:,:]
@@ -52,14 +50,14 @@ x_test_2 = x_test_2[:10000,:]
 y_test_2 = y_test_2[:10000,:]
 
 
-
 batch_size = 100
-latent_dim = 5
+latent_dim_x_1 =5
+latent_dim_x_2 = 10
 latent_dim_y = 10
-epochs = 5000
+epochs = 1000
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.00005
+learning_rate = 0.0001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -70,7 +68,7 @@ original_dim_2  = 32*32*3
 dataset_name = 'dataset_name_1'
 
 experiment_name = dataset_name + \
-  '_____z_dim_' + str(latent_dim)
+  '_____z_dim_' + str(latent_dim_y)
 
   # if ~ os.path.isdir('../experiments'):
   #   os.makedirs('../experiments')
@@ -86,23 +84,24 @@ os.makedirs(experiment_dir_path)
 
 x_1 = Input(batch_shape=(batch_size, original_dim_1))
 x_reshaped_1 = Reshape((28,28,1))
-h_e_1_1 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_1_1 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_e_1_2 = MaxPooling2D((2, 2), padding='same')
-h_e_1_3 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_e_1_4 = MaxPooling2D((2, 2), padding='same')
-h_e_1_5 = Conv2D(8, (3, 3), activation='relu', padding='same')
+h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
 h_e_1_6 = MaxPooling2D((2, 2), padding='same')
 h_e_1_7 = Flatten()
 
-z_mean_1_1 = Dense(latent_dim)
-z_log_var_1_1 = Dense(latent_dim)
+z_mean_1_1 = Dense(latent_dim_x_1)
+z_log_var_1_1 = Dense(latent_dim_x_1)
 
 
-z_mean_1_2 = Dense(latent_dim)
-z_log_var_1_2 = Dense(latent_dim)
+z_mean_1_2 = Dense(latent_dim_y)
+z_log_var_1_2 = Dense(latent_dim_y)
 
 def sampling(args):
     z_mean, z_log_var = args
+    latent_dim = int(z_mean.shape[1])
     epsilon = K.random_normal(shape=(batch_size, latent_dim), mean=0.,
                               stddev=epsilon_std)
     return z_mean + K.exp(z_log_var / 2) * epsilon
@@ -114,11 +113,11 @@ def build_z(args):
 
 h_d_x_1_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_1_2 = Reshape((4,4,8))
-h_d_x_1_3 = Conv2D(8, (3, 3), activation='relu', padding='same')
+h_d_x_1_3 = Conv2D(16, (3, 3), activation='relu', padding='same')
 h_d_x_1_4 = UpSampling2D((2, 2))
-h_d_x_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_d_x_1_5 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_d_x_1_6 = UpSampling2D((2, 2))
-h_d_x_1_7 = Conv2D(16, (3, 3), activation='relu')
+h_d_x_1_7 = Conv2D(32, (3, 3), activation='relu')
 h_d_x_1_8 = UpSampling2D((2, 2))
 x_decoded_reshaped_1 = Conv2D(1, (3, 3), activation='sigmoid', padding='same')
 x_decoded_1 = Flatten()
@@ -139,12 +138,12 @@ h_e_2_6 = MaxPooling2D((2, 2), padding='same')
 h_e_2_7 = Conv2D(8, (3, 3), activation='relu', padding='same')
 h_e_2_8 = Flatten()
 
-z_mean_2_1 = Dense(latent_dim)
-z_log_var_2_1 = Dense(latent_dim)
+z_mean_2_1 = Dense(latent_dim_x_2)
+z_log_var_2_1 = Dense(latent_dim_x_2)
 
 
-z_mean_2_2 = Dense(latent_dim)
-z_log_var_2_2 = Dense(latent_dim)
+z_mean_2_2 = Dense(latent_dim_y)
+z_log_var_2_2 = Dense(latent_dim_y)
 
 
 
@@ -196,9 +195,9 @@ _z_mean_1_2 = z_mean_1_2(_h_e_1_7)
 _z_log_var_1_2 = z_log_var_1_2(_h_e_1_7)
 
 
-z_1_1 = Lambda(sampling, output_shape=(latent_dim,))([_z_mean_1_1, _z_log_var_1_1])
+z_1_1 = Lambda(sampling)([_z_mean_1_1, _z_log_var_1_1])
 
-z_1_2 = Lambda(sampling, output_shape=(latent_dim,))([_z_mean_1_2, _z_log_var_1_2])
+z_1_2 = Lambda(sampling)([_z_mean_1_2, _z_log_var_1_2])
 
 z_total_1 = Lambda(build_z)([z_1_1, z_1_2])
 
@@ -233,9 +232,9 @@ _z_mean_2_2 = z_mean_2_2(_h_e_2_8)
 _z_log_var_2_2 = z_log_var_2_2(_h_e_2_8)
 
 
-z_2_1 = Lambda(sampling, output_shape=(latent_dim,))([_z_mean_2_1, _z_log_var_2_1])
+z_2_1 = Lambda(sampling)([_z_mean_2_1, _z_log_var_2_1])
 
-z_2_2 = Lambda(sampling, output_shape=(latent_dim,))([_z_mean_2_2, _z_log_var_2_2])
+z_2_2 = Lambda(sampling)([_z_mean_2_2, _z_log_var_2_2])
 
 z_total_2 = Lambda(build_z)([z_2_1, z_2_2])
 
@@ -261,7 +260,7 @@ _x_decoded_2 = x_decoded_2(_x_decoded_reshaped_2)
 ##### Build Classifier #################################################################################
 
 
-_h_d_y_1_1 = h_d_y_1(z_2_1)
+_h_d_y_1_1 = h_d_y_1(z_1_2)
 _h_d_y_1_2 = h_d_y_2(_h_d_y_1_1)
 _h_d_y_1_3 = h_d_y_3(_h_d_y_1_2)
 _h_d_y_1_4 = h_d_y_4(_h_d_y_1_3)
@@ -289,10 +288,11 @@ def vae_loss(x, _x_decoded):
     kl_loss_1 = - 0.5 * K.sum(1 + _z_log_var_1_1 - K.square(_z_mean_1_1) - K.exp(_z_log_var_1_1), axis=-1)
     kl_loss_2 = - 0.5 * K.sum(1 + _z_log_var_1_2 - K.square(_z_mean_1_2) - K.exp(_z_log_var_1_2), axis=-1)
     kl_loss_3 = - 0.5 * K.sum(1 + _z_log_var_2_1 - K.square(_z_mean_2_1) - K.exp(_z_log_var_2_1), axis=-1)
-    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
+#    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
+    kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) )
     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
-    y_loss_2 = 10 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
-    return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1 + y_loss_2
+    y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
+    return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
 
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
 
@@ -420,7 +420,7 @@ class ACCURACY(Callback):
         ACC_1 = 1 - n_error_1 / 10000
         ACC_2 = 1 - n_error_2 / 10000
         Accuracy[ii,:] = [ACC_1 , ACC_2]
-        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2, '\n\n')
+        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2)
         ii= ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
@@ -446,11 +446,11 @@ class RECONSTRUCTION(Callback):
           for j in range(tmp):
             ax = plt.subplot(tmp, tmp, i*tmp+j+1)
             # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-            plt.imshow(reconstructed_x_test_1[i*tmp+j].reshape(28,28))
+            plt.imshow(reconstructed_x_test_1[i*tmp+j].reshape(28,28),cmap = 'Greys_r')
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
         plt.savefig(image_file_name_1)
-        plt.close()
+        plt.close('all')
 
         tmp = 4
         plt.figure(figsize=(tmp + 1, tmp + 1))
@@ -462,12 +462,12 @@ class RECONSTRUCTION(Callback):
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
         plt.savefig(image_file_name_2)
-        plt.close()
+        plt.close('all')
 
 reconstruction = RECONSTRUCTION()
-#
-#model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'rb'))
-#model.set_weights(model_weights)
+
+# model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+# model.set_weights(model_weights)
 
 model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_train],
         shuffle=True,
@@ -477,4 +477,5 @@ model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_
         callbacks = [accuracy,reconstruction])
 
 model_weights = model.get_weights()
-pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'wb'))
+pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
+
