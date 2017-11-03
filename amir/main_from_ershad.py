@@ -32,8 +32,8 @@ from importDatasets import importMnistAndSvhn
 #                                                                    Fetch Data
 # -----------------------------------------------------------------------------
 
-(dataset_name_1, dataset_name_2, x_train_1, 
-     x_train_2, y_train, x_test_1, y_test_1, 
+(dataset_name_1, dataset_name_2, x_train_1,
+     x_train_2, y_train, x_test_1, y_test_1,
      x_test_2, y_test_2, num_classes) = importMnistAndSvhn()
 
 
@@ -41,7 +41,7 @@ training_size = 40000
 x_val_1 = x_train_1[training_size:,:]
 x_train_1 =x_train_1[:training_size,:]
 
-y_val = y_train[training_size:,:] 
+y_val = y_train[training_size:,:]
 
 y_train = y_train[:training_size,:]
 
@@ -52,7 +52,7 @@ x_test_2 = x_test_2[:10000,:]
 y_test_2 = y_test_2[:10000,:]
 
 
- 
+
 batch_size = 100
 latent_dim_x_1 =5
 latent_dim_x_2 = 10
@@ -71,7 +71,7 @@ original_dim_2  = 32*32*3
 dataset_name = 'dataset_name_1'
 
 experiment_name = dataset_name + \
-  '_____z_dim_' + str(latent_dim_y) 
+  '_____z_dim_' + str(latent_dim_y)
 
   # if ~ os.path.isdir('../experiments'):
   #   os.makedirs('../experiments')
@@ -108,9 +108,9 @@ def sampling(args):
     epsilon = K.random_normal(shape=(batch_size, latent_dim), mean=0.,
                               stddev=epsilon_std)
     return z_mean + K.exp(z_log_var / 2) * epsilon
-    
+
 def build_z(args):
-    
+
     z_1 ,z_2 = args
     return tf.concat([z_1,z_2],1)
 
@@ -256,7 +256,7 @@ _x_decoded_2 = x_decoded_2(_x_decoded_reshaped_2)
 
 
 
-#### 
+####
 
 
 
@@ -292,7 +292,7 @@ def vae_loss(x, _x_decoded):
     kl_loss_2 = - 0.5 * K.sum(1 + _z_log_var_1_2 - K.square(_z_mean_1_2) - K.exp(_z_log_var_1_2), axis=-1)
     kl_loss_3 = - 0.5 * K.sum(1 + _z_log_var_2_1 - K.square(_z_mean_2_1) - K.exp(_z_log_var_2_1), axis=-1)
 #    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
-    kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) ) 
+    kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) )
     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
     y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
     return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
@@ -410,8 +410,8 @@ class ACCURACY(Callback):
     def on_epoch_end(self,batch,logs = {}):
         ii= pickle.load(open('counter', 'rb'))
         _,_, b_1,b_2  = vaeencoder.predict([x_test_1,x_test_2], batch_size = batch_size)
-        
-        
+
+
         Accuracy[ii, 0]
 
         lll_1 = np.argmax(b_1, axis =1)
@@ -428,7 +428,7 @@ class ACCURACY(Callback):
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
           print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n'.format(ii, ACC_1, ACC_2), file=text_file)
-          
+
 
 accuracy = ACCURACY()
 
@@ -469,8 +469,8 @@ class RECONSTRUCTION(Callback):
 
 reconstruction = RECONSTRUCTION()
 
-model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
-model.set_weights(model_weights)
+# model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+# model.set_weights(model_weights)
 
 model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_train],
         shuffle=True,
