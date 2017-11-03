@@ -225,17 +225,50 @@ class RECONSTRUCTION(Callback):
         # plt.savefig(image_file_name_1)
         # plt.close('all')
 
-        tmp = 10
-        plt.figure(figsize=(tmp + 1, tmp + 1))
-        for i in range(tmp):
-          for j in range(tmp):
-            ax = plt.subplot(tmp, tmp, i*tmp+j+1)
-            # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-            plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
-            ax.get_xaxis().set_visible(False)
-            ax.get_yaxis().set_visible(False)
+        # tmp = 10
+        # plt.figure(figsize=(tmp + 1, tmp + 1))
+        # for i in range(tmp):
+        #   for j in range(tmp):
+        #     ax = plt.subplot(tmp, tmp, i*tmp+j+1)
+        #     # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
+        #     plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
+        #     ax.get_xaxis().set_visible(False)
+        #     ax.get_yaxis().set_visible(False)
+        # plt.savefig(image_file_name_2)
+        # plt.close('all')
+
+        number_of_sample_images = 10
+        plt.figure()
+
+        ax = plt.subplot(1,2,1)
+        x_samples = x_test_2
+        canvas = getFigureOfSamplesForInput(x_samples, 32, number_of_sample_images)
+        plt.imshow(canvas)
+        ax.set_title('Original Test Images', fontsize=8)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        ax = plt.subplot(1,2,2)
+        x_samples = reconstructed_x_test_2
+        canvas = getFigureOfSamplesForInput(x_samples, 32, number_of_sample_images)
+        plt.imshow(canvas)
+        ax.set_title('Reconstructed Test Images', fontsize=8)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
         plt.savefig(image_file_name_2)
         plt.close('all')
+
+
+    def getFigureOfSamplesForInput(self, x_samples, sample_dim, number_of_sample_images, grid_x=range(10), grid_y=range(10)):
+        figure = np.zeros((sample_dim * number_of_sample_images, sample_dim * number_of_sample_images, 3))
+        for i in range(number_of_sample_images):
+            for j in range(number_of_sample_images):
+                digit = x_samples[i * number_of_sample_images + j, :].reshape(sample_dim, sample_dim, 3)
+                figure[i * sample_dim: (i + 1) * sample_dim,
+                       j * sample_dim: (j + 1) * sample_dim, :] = digit
+        return figure
+
 
 reconstruction = RECONSTRUCTION()
 
