@@ -62,7 +62,8 @@ intermediate_dim = 500
 epsilon_std = 1.0
 learning_rate = 0.01
 original_dim_1 = 784
-original_dim_2  = 32*32*3
+# original_dim_2  = 32*32*3
+original_dim_2  = 784
 
 # -----------------------------------------------------------------------------
 #                                                                   Build Model
@@ -81,7 +82,6 @@ experiment_dir_path = '../experiments/exp' + \
   '_____' + \
   experiment_name
 os.makedirs(experiment_dir_path)
-
 
 ########## Meta ########################################################
 
@@ -117,8 +117,6 @@ h_d_x_1_8 = UpSampling2D((2, 2))
 x_decoded_reshaped_1 = Conv2D(1, (3, 3), activation='sigmoid', padding='same')
 x_decoded_1 = Flatten()
 
-
-
 ###### Autoencoder 2 Network ###########################################################
 
 x_2 = Input(batch_shape=(batch_size, original_dim_2))
@@ -144,8 +142,6 @@ h_d_x_2_7 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_2_8 = UpSampling2D((2, 2))
 x_decoded_reshaped_2 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
 x_decoded_2 = Flatten()
-
-
 
 ## Classifier Network ##############################################################
 
@@ -189,6 +185,7 @@ _x_decoded_reshaped_1 = x_decoded_reshaped_1(_h_d_x_1_8)
 _x_decoded_1 = x_decoded_1(_x_decoded_reshaped_1)
 
 ##### Build model 2 #########################################################################################
+
 _x_reshaped_2 = x_reshaped_2(x_2)
 _h_e_2_1 = h_e_2_1(_x_reshaped_2)
 _h_e_2_2 = h_e_2_2(_h_e_2_1)
@@ -212,7 +209,6 @@ _h_d_x_2_7 = h_d_x_2_7(_h_d_x_2_6)
 _h_d_x_2_8 = h_d_x_2_8(_h_d_x_2_7)
 _x_decoded_reshaped_2 = x_decoded_reshaped_2(_h_d_x_2_8)
 _x_decoded_2 = x_decoded_2(_x_decoded_reshaped_2)
-
 
 
 ##### Build Classifier #################################################################################
@@ -298,16 +294,13 @@ _x_decoded_2_ = x_decoded_2(_x_decoded_reshaped_2_)
 
 _z_y_ = Lambda(build_z)([_z_mean_1_, _z_mean_2_])
 
-
 _z_y_reshape_ = z_y_reshape(_z_y_)
-
 
 _h_d_y_1_ = h_d_y_1(_z_y_reshape_)
 _h_d_y_2_ = h_d_y_2(_h_d_y_1_)
 _h_d_y_3_ = h_d_y_3(_h_d_y_2_)
 _y_decoded_reshaped_ = y_decoded_reshaped(_h_d_y_3_)
 _y_decoded_ = y_decoded(_y_decoded_reshaped_)
-
 
 vaeencoder = Model(inputs = [x_1, x_2], outputs = [_x_decoded_1_, _x_decoded_2_, _y_decoded_])
 
@@ -327,7 +320,6 @@ y_test_label_2 = np.argmax(y_test_2,axis =1)
 #y_test_label = np.reshape(y_test_label,(y_test_label.shape[0],1))
 #y_test_label = np.reshape(y_test_label,(y_test_label.shape[0],1))
 y_test_label = np.concatenate((y_test_label_1,y_test_label_2),axis = 0)
-
 
 Accuracy = np.zeros((epochs,1))
 ii=0
