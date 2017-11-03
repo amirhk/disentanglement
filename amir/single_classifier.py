@@ -192,7 +192,7 @@ def vae_loss(x, _x_decoded):
 # model = Model(inputs = [x_1, yy_1],outputs = [_y_decoded_1])
 model = Model(inputs = [x_2, yy_2],outputs = [_y_decoded_2])
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
-model.compile(optimizer=my_adam, loss=vae_loss)
+model.compile(optimizer=my_adam, loss=vae_loss, metrics = ['accuracy'])
 
 ############################################################################
 ############################################################################
