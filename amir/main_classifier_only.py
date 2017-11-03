@@ -14,7 +14,7 @@ from keras import backend as K
 from keras import objectives , utils,optimizers
 from keras.datasets import mnist
 from mpl_toolkits.mplot3d import Axes3D
-from keras.callbacks import Callback
+from keras.callbacks import Callback, LearningRateScheduler
 import tensorflow as tf
 
 import sys
