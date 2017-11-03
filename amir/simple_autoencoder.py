@@ -206,10 +206,10 @@ class RECONSTRUCTION(Callback):
 
 
     def getFigureOfSamplesForInput(self, x_samples, image_dim, image_channels, number_of_sample_images, grid_x=range(10), grid_y=range(10)):
-        figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images, image_channels)
+        figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images, image_channels))
         for i in range(number_of_sample_images):
             for j in range(number_of_sample_images):
-                digit = x_samples[i * number_of_sample_images + j, :].reshape(image_dim, image_dim, image_channels
+                digit = x_samples[i * number_of_sample_images + j, :].reshape(image_dim, image_dim, image_channels)
                 figure[i * image_dim: (i + 1) * image_dim,
                        j * image_dim: (j + 1) * image_dim, :] = digit
         return figure

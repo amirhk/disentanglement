@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 1000
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.0001
+learning_rate = 0.001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -237,6 +237,24 @@ class ACCURACY(Callback):
           print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n'.format(ii, ACC_1, ACC_2), file=text_file)
 
 accuracy = ACCURACY()
+
+def scheduler(epoch):
+    # initial_lrate = 0.001
+    # # if epoch == 0:
+    # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
+    # if epoch == 25:
+    #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
+    # elif epoch == 50:
+    #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
+    # return float(model.optimizer.lr) # return model.lr.get_value()
+    if epoch > 250:
+        return float(0.0001)
+    if epoch > 100:
+        return float(0.0003)
+    else:
+        return float(0.001) # initial_lrate
+
+change_lr = LearningRateScheduler(scheduler)
 
 model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
         shuffle=True,
