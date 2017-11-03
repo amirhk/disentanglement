@@ -420,11 +420,11 @@ class ACCURACY(Callback):
         ACC_1 = 1 - n_error_1 / 10000
         ACC_2 = 1 - n_error_2 / 10000
         Accuracy[ii,:] = [ACC_1 , ACC_2]
-        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2)
+        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2, '\n\n')
         ii= ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
-          print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n\n\n'.format(ii, ACC_1, ACC_2), file=text_file)
+          print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n'.format(ii, ACC_1, ACC_2), file=text_file)
 
 
 accuracy = ACCURACY()
@@ -450,6 +450,7 @@ class RECONSTRUCTION(Callback):
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
         plt.savefig(image_file_name_1)
+        plt.close()
 
         tmp = 4
         plt.figure(figsize=(tmp + 1, tmp + 1))
@@ -461,6 +462,7 @@ class RECONSTRUCTION(Callback):
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
         plt.savefig(image_file_name_2)
+        plt.close()
 
 reconstruction = RECONSTRUCTION()
 #
