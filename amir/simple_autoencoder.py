@@ -54,8 +54,8 @@ y_test_2 = y_test_2[:10000,:]
 
 
 batch_size = 100
-latent_dim_x_1 =5
-latent_dim_x_2 = 10
+latent_dim_x_1 = 5
+latent_dim_x_2 = 50
 latent_dim_y = 10
 epochs = 1000
 intermediate_dim = 500
@@ -95,7 +95,7 @@ h_e_2_6 = MaxPooling2D((2, 2), padding='same')
 h_e_2_7 = Conv2D(8, (3, 3), activation='relu', padding='same')
 h_e_2_8 = Flatten()
 
-z = Dense(latent_dim_x_2 + latent_dim_y)
+z = Dense(latent_dim_x_2)
 
 h_d_x_2_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_2_2 = Reshape((4,4,8))
@@ -225,7 +225,7 @@ class RECONSTRUCTION(Callback):
         # plt.savefig(image_file_name_1)
         # plt.close('all')
 
-        tmp = 4
+        tmp = 10
         plt.figure(figsize=(tmp + 1, tmp + 1))
         for i in range(tmp):
           for j in range(tmp):
