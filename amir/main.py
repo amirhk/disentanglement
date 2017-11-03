@@ -121,11 +121,11 @@ x_decoded_1 = Flatten()
 
 x_2 = Input(batch_shape=(batch_size, original_dim_2))
 x_reshaped_2 = Reshape((32,32,3))
-h_e_2_1 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_2_1 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_2_2 = MaxPooling2D((2, 2), padding='same')
-h_e_2_3 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_2_3 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_e_2_4 = MaxPooling2D((2, 2), padding='same')
-h_e_2_5 = Conv2D(8, (3, 3), activation='relu', padding='same')
+h_e_2_5 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_e_2_6 = MaxPooling2D((2, 2), padding='same')
 h_e_2_7 = Flatten()
 
@@ -135,11 +135,11 @@ z_log_var_2 = Dense(latent_dim)
 
 h_d_x_2_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_2_2 = Reshape((4,4,8))
-h_d_x_2_3 = Conv2D(8, (3, 3), activation='relu', padding='same')
+h_d_x_2_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
 h_d_x_2_4 = UpSampling2D((2, 2))
-h_d_x_2_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_d_x_2_5 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_2_6 = UpSampling2D((2, 2))
-h_d_x_2_7 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_d_x_2_7 = Conv2D(64, (3, 3), activation='relu', padding='same')
 h_d_x_2_8 = UpSampling2D((2, 2))
 x_decoded_reshaped_2 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
 x_decoded_2 = Flatten()
@@ -319,16 +319,16 @@ _y_decoded_reshaped_ = y_decoded_reshaped(_h_d_y_3_)
 _y_decoded_ = y_decoded(_y_decoded_reshaped_)
 
 
-vaeencoder = Model(inputs = [x_1,x_2], outputs = [_x_decoded_1_,_x_decoded_2_,_y_decoded_])
+vaeencoder = Model(inputs = [x_1,x_2],outputs = [_x_decoded_1_,_x_decoded_2_,_y_decoded_])
 ############################################################################
 ############################################################################
 ############################################################################
 # -----------------------------------------------------------------------------
 #                                                                   Train Model
 ## -----------------------------------------------------------------------------
-# _,_, b  = vaeencoder.predict([x_test_1,x_test_2],batch_size = batch_size)
+_,_, b  = vaeencoder.predict([x_test_1,x_test_2],batch_size = batch_size)
 
-# b = np.reshape(b,(x_test_1.shape[0],2,10))
+b = np.reshape(b,(x_test_1.shape[0],2,10))
 
 y_test_label_1 = np.argmax(y_test_1,axis =1)
 y_test_label_2 = np.argmax(y_test_2,axis =1)
@@ -347,7 +347,7 @@ class ACCURACY(Callback):
     def on_epoch_end(self,batch,logs = {}):
         ii= pickle.load(open('counter', 'rb'))
         _,_, b  = vaeencoder.predict([x_test_1,x_test_2], batch_size = batch_size)
-        b = np.reshape(b,(x_test_1.shape[0], 2, 10))
+        b = np.reshape(b,(x_test_1.shape[0],2,10))
 
         Accuracy[ii, 0]
 
@@ -362,7 +362,9 @@ class ACCURACY(Callback):
         with open(text_file_name, 'a') as text_file:
           print('Epoch #{} Accuracy:{} \n'.format(ii, ACC), file=text_file)
 
+
 accuracy = ACCURACY()
+
 
 class RECONSTRUCTION(Callback):
 
@@ -397,7 +399,6 @@ class RECONSTRUCTION(Callback):
         plt.savefig(image_file_name_2)
 
 reconstruction = RECONSTRUCTION()
-
 #
 #model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'rb'))
 #model.set_weights(model_weights)
@@ -407,7 +408,7 @@ model.fit([x_train_1,x_train_2, y_train],[x_train_1,x_train_2,y_train],
         epochs=epochs,
         batch_size=batch_size,
         validation_data =([x_val_1,x_val_2,y_val],[x_val_1,x_val_2,y_val]),
-        callbacks = [accuracy, reconstruction])
+        callbacks = [accuracy,reconstruction])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'wb'))
