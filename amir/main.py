@@ -68,7 +68,7 @@ original_dim_2  = 32*32*3
 #                                                                   Build Model
 # -----------------------------------------------------------------------------
 
-dataset_name = 'dataset_name_1'
+dataset_name = dataset_name_1 + dataset_name_2
 
 experiment_name = dataset_name + \
   '_____z_dim_' + str(latent_dim)
@@ -82,6 +82,14 @@ experiment_dir_path = '../experiments/exp' + \
   experiment_name
 os.makedirs(experiment_dir_path)
 
+
+########## Meta ########################################################
+
+def sampling(args):
+    z_mean, z_log_var = args
+    epsilon = K.random_normal(shape=(batch_size, latent_dim), mean=0.,
+                              stddev=epsilon_std)
+    return z_mean + K.exp(z_log_var / 2) * epsilon
 
 ########## Autoencoder 1 Network ########################################################
 
@@ -97,12 +105,6 @@ h_e_1_7 = Flatten()
 
 z_mean_1 = Dense(latent_dim)
 z_log_var_1 = Dense(latent_dim)
-
-def sampling(args):
-    z_mean, z_log_var = args
-    epsilon = K.random_normal(shape=(batch_size, latent_dim), mean=0.,
-                              stddev=epsilon_std)
-    return z_mean + K.exp(z_log_var / 2) * epsilon
 
 h_d_x_1_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_1_2 = Reshape((4,4,8))
@@ -132,7 +134,6 @@ h_e_2_7 = Flatten()
 z_mean_2 = Dense(latent_dim)
 z_log_var_2 = Dense(latent_dim)
 
-
 h_d_x_2_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_2_2 = Reshape((4,4,8))
 h_d_x_2_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
@@ -149,7 +150,6 @@ x_decoded_2 = Flatten()
 ## Classifier Network ##############################################################
 
 def build_z(args):
-
     z_1 ,z_2 = args
     return tf.concat([z_1[:,:latent_dim_y],z_2[:,:latent_dim_y]],1)
 
@@ -163,10 +163,6 @@ y_decoded = Reshape((20,))
 
 yy = Input(batch_shape = (batch_size,20))
 
-
-#########################################################################################
-
-
 ##### Build model 1 #########################################################################################
 _x_reshaped_1 = x_reshaped_1(x_1)
 _h_e_1_1 = h_e_1_1(_x_reshaped_1)
@@ -176,7 +172,6 @@ _h_e_1_4 = h_e_1_4(_h_e_1_3)
 _h_e_1_5 = h_e_1_5(_h_e_1_4)
 _h_e_1_6 = h_e_1_6(_h_e_1_5)
 _h_e_1_7 = h_e_1_7(_h_e_1_6)
-
 
 _z_mean_1 = z_mean_1(_h_e_1_7)
 _z_log_var_1 = z_log_var_1(_h_e_1_7)
@@ -203,12 +198,11 @@ _h_e_2_5 = h_e_2_5(_h_e_2_4)
 _h_e_2_6 = h_e_2_6(_h_e_2_5)
 _h_e_2_7 = h_e_2_7(_h_e_2_6)
 
-
 _z_mean_2 = z_mean_2(_h_e_2_7)
 _z_log_var_2 = z_log_var_2(_h_e_2_7)
 z_2 = Lambda(sampling, output_shape=(latent_dim,))([_z_mean_2, _z_log_var_2])
 
-_h_d_x_2_1 = h_d_x_2_1(z_1)
+_h_d_x_2_1 = h_d_x_2_1(z_2)
 _h_d_x_2_2 = h_d_x_2_2(_h_d_x_2_1)
 _h_d_x_2_3 = h_d_x_2_3(_h_d_x_2_2)
 _h_d_x_2_4 = h_d_x_2_4(_h_d_x_2_3)
@@ -222,7 +216,6 @@ _x_decoded_2 = x_decoded_2(_x_decoded_reshaped_2)
 
 
 ##### Build Classifier #################################################################################
-
 
 _z_y = Lambda(build_z)([z_1, z_2])
 
@@ -254,6 +247,7 @@ model.compile(optimizer=my_adam, loss=vae_loss)
 ############################################################################
 ############################################################################
 #### Build another model####################################################
+
 _x_reshaped_1_ = x_reshaped_1(x_1)
 _h_e_1_1_ = h_e_1_1(_x_reshaped_1_)
 _h_e_1_2_ = h_e_1_2(_h_e_1_1_)
@@ -263,9 +257,7 @@ _h_e_1_5_ = h_e_1_5(_h_e_1_4_)
 _h_e_1_6_ = h_e_1_6(_h_e_1_5_)
 _h_e_1_7_ = h_e_1_7(_h_e_1_6_)
 
-
 _z_mean_1_ = z_mean_1(_h_e_1_7_)
-
 
 _h_d_x_1_1_ = h_d_x_1_1(_z_mean_1_)
 _h_d_x_1_2_ = h_d_x_1_2(_h_d_x_1_1_)
@@ -277,6 +269,7 @@ _h_d_x_1_7_ = h_d_x_1_7(_h_d_x_1_6_)
 _h_d_x_1_8_ = h_d_x_1_8(_h_d_x_1_7_)
 _x_decoded_reshaped_1_ = x_decoded_reshaped_1(_h_d_x_1_8_)
 _x_decoded_1_ = x_decoded_1(_x_decoded_reshaped_1_)
+
 #####################################
 
 _x_reshaped_2_ = x_reshaped_2(x_2)
@@ -288,9 +281,7 @@ _h_e_2_5_ = h_e_2_5(_h_e_2_4_)
 _h_e_2_6_ = h_e_2_6(_h_e_2_5_)
 _h_e_2_7_ = h_e_2_7(_h_e_2_6_)
 
-
 _z_mean_2_ = z_mean_2(_h_e_2_7_)
-
 
 _h_d_x_2_1_ = h_d_x_2_1(_z_mean_2_)
 _h_d_x_2_2_ = h_d_x_2_2(_h_d_x_2_1_)
@@ -303,9 +294,8 @@ _h_d_x_2_8_ = h_d_x_2_8(_h_d_x_2_7_)
 _x_decoded_reshaped_2_ = x_decoded_reshaped_2(_h_d_x_2_8_)
 _x_decoded_2_ = x_decoded_2(_x_decoded_reshaped_2_)
 
-
-
 #######################################################
+
 _z_y_ = Lambda(build_z)([_z_mean_1_, _z_mean_2_])
 
 
@@ -319,14 +309,15 @@ _y_decoded_reshaped_ = y_decoded_reshaped(_h_d_y_3_)
 _y_decoded_ = y_decoded(_y_decoded_reshaped_)
 
 
-vaeencoder = Model(inputs = [x_1,x_2],outputs = [_x_decoded_1_,_x_decoded_2_,_y_decoded_])
+vaeencoder = Model(inputs = [x_1, x_2], outputs = [_x_decoded_1_, _x_decoded_2_, _y_decoded_])
+
 ############################################################################
 ############################################################################
 ############################################################################
 # -----------------------------------------------------------------------------
 #                                                                   Train Model
 ## -----------------------------------------------------------------------------
-_,_, b  = vaeencoder.predict([x_test_1,x_test_2],batch_size = batch_size)
+_, _, b = vaeencoder.predict([x_test_1,x_test_2],batch_size = batch_size)
 
 b = np.reshape(b,(x_test_1.shape[0],2,10))
 
@@ -362,9 +353,7 @@ class ACCURACY(Callback):
         with open(text_file_name, 'a') as text_file:
           print('Epoch #{} Accuracy:{} \n'.format(ii, ACC), file=text_file)
 
-
 accuracy = ACCURACY()
-
 
 class RECONSTRUCTION(Callback):
 
@@ -399,7 +388,7 @@ class RECONSTRUCTION(Callback):
         plt.savefig(image_file_name_2)
 
 reconstruction = RECONSTRUCTION()
-#
+
 #model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim) + 'd_trained_on_' + dataset_name, 'rb'))
 #model.set_weights(model_weights)
 
