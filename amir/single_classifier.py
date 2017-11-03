@@ -240,7 +240,7 @@ class ACCURACY(Callback):
         #   print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n'.format(ii, ACC_1, ACC_2), file=text_file)
         ii= pickle.load(open('counter', 'rb'))
         Accuracy[ii, 0]
-        b_1, b_2  = vaeencoder.predict([x_test_2], batch_size = batch_size)
+        b_2  = vaeencoder.predict([x_test_2], batch_size = batch_size)
         lll_2 = np.argmax(b_2, axis =1)
         lll_2 = np.reshape(lll_2, (len(not_hot_y_test_1),))
         n_error_2 = np.count_nonzero(lll_2 - not_hot_y_test_2)
