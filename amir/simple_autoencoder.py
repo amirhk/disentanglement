@@ -57,7 +57,7 @@ batch_size = 100
 latent_dim_x_1 = 5
 latent_dim_x_2 = 50
 latent_dim_y = 10
-epochs = 1000
+epochs = 30
 intermediate_dim = 500
 epsilon_std = 1.0
 learning_rate = 0.001
@@ -68,7 +68,7 @@ original_dim_2  = 32*32*3
 #                                                                   Build Model
 # -----------------------------------------------------------------------------
 
-dataset_name = 'dataset_name_1'
+dataset_name = dataset_name_2
 
 experiment_name = dataset_name + \
   '_____z_dim_' + str(latent_dim_y)
@@ -239,7 +239,7 @@ class RECONSTRUCTION(Callback):
 
 reconstruction = RECONSTRUCTION()
 
-# model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+# model_weights = pickle.load(open('simple_autoencoder' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
 
 # model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_train],
@@ -250,8 +250,8 @@ model.fit([x_train_2], [x_train_2],
         validation_data =([x_val_2], [x_val_2]),
         callbacks = [reconstruction])
 
-# model_weights = model.get_weights()
-# pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
+model_weights = model.get_weights()
+pickle.dump((model_weights), open('simple_autoencoder' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
 
 
 
