@@ -57,7 +57,7 @@ batch_size = 100
 latent_dim_x_1 = 5
 latent_dim_x_2 = 50
 latent_dim_y = 10
-epochs = 30
+epochs = 100
 intermediate_dim = 500
 epsilon_std = 1.0
 learning_rate = 0.001
@@ -273,6 +273,19 @@ class RECONSTRUCTION(Callback):
 
 reconstruction = RECONSTRUCTION()
 
+
+def scheduler(epoch):
+    if epoch == 1:
+        model.lr.set_value(0.001)
+    elif epoch == 25:
+        model.lr.set_value(0.0003)
+    elif epoch == 50:
+        model.lr.set_value(0.0001)
+    return model.lr.get_value()
+
+change_lr = LearningRateScheduler(scheduler)
+
+
 # model_weights = pickle.load(open('simple_autoencoder' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
 
@@ -282,7 +295,7 @@ model.fit([x_train_2], [x_train_2],
         epochs=epochs,
         batch_size=batch_size,
         validation_data =([x_val_2], [x_val_2]),
-        callbacks = [reconstruction])
+        callbacks = [change_lr, reconstruction])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('simple_autoencoder' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
