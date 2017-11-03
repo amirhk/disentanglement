@@ -296,7 +296,7 @@ def vae_loss(x, _x_decoded):
 
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
 
-model.compile(optimizer=my_adam, loss=vae_loss)
+model.compile(optimizer=my_adam, loss=vae_loss, metrics=['accuracy'])
 
 ############################################################################
 ############################################################################

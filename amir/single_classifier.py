@@ -272,8 +272,8 @@ def scheduler(epoch):
 
 change_lr = LearningRateScheduler(scheduler)
 
-x_train_2 = np.tile(x_train_2[:1000,:], (40,1))
-y_train = np.tile(y_train[:1000], (40,1))
+# x_train_2 = np.tile(x_train_2[:1000,:], (40,1))
+# y_train = np.tile(y_train[:1000], (40,1))
 model.fit([x_train_2, y_train], [y_train],
         shuffle=True,
         epochs=epochs,
