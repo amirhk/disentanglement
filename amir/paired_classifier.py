@@ -265,6 +265,7 @@ model.fit([x_train_1, x_train_2, y_train_1, y_train_2], [y_train_1, y_train_2],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
+        verbose=1,
         validation_data =([x_val_1, x_val_2, y_val, y_val], [y_val, y_val]),
         callbacks = [accuracy, change_lr])
 
