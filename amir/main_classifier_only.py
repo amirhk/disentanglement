@@ -217,20 +217,20 @@ class ACCURACY(Callback):
 
     def on_epoch_end(self,batch,logs = {}):
         ii= pickle.load(open('counter', 'rb'))
-        _,_, b_1,b_2  = vaeencoder.predict([x_test_1, x_test_2], batch_size = batch_size)
+        b_1, b_2  = vaeencoder.predict([x_test_1, x_test_2], batch_size = batch_size)
 
         Accuracy[ii, 0]
 
         lll_1 = np.argmax(b_1, axis =1)
         lll_2 = np.argmax(b_2, axis =1)
-        lll_1= np.reshape(lll_1,(10000,))
-        lll_2= np.reshape(lll_2,(10000,))
+        lll_1= np.reshape(lll_1,(len(not_hot_y_test_1),))
+        lll_2= np.reshape(lll_2,(len(not_hot_y_test_1),))
         n_error_1 = np.count_nonzero(lll_1 - not_hot_y_test_1)
         n_error_2 = np.count_nonzero(lll_2 - not_hot_y_test_2)
-        ACC_1 = 1 - n_error_1 / 10000
-        ACC_2 = 1 - n_error_2 / 10000
+        ACC_1 = 1 - n_error_1 / len(not_hot_y_test_1)
+        ACC_2 = 1 - n_error_2 / len(not_hot_y_test_1)
         Accuracy[ii,:] = [ACC_1 , ACC_2]
-        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2)
+        print('\n accuracy_mnist = ', ACC_1, ' accuracy_svhn = ', ACC_2)
         ii= ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
