@@ -246,7 +246,7 @@ class ACCURACY(Callback):
         n_error_2 = np.count_nonzero(lll_2 - not_hot_y_test_2)
         ACC_2 = 1 - n_error_2 / len(not_hot_y_test_1)
         Accuracy[ii,:] = [-1 , ACC_2]
-        print('\n accuracy_svhn = \n\n', ACC_2)
+        print('\n accuracy_svhn = ', ACC_2, '\n\n')
         ii = ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
@@ -272,6 +272,8 @@ def scheduler(epoch):
 
 change_lr = LearningRateScheduler(scheduler)
 
+x_train_2 = np.tile(x_train_2[:100,:], (400,1))
+y_train = np.tile(y_train[:100], (400,1))
 model.fit([x_train_2, y_train], [y_train],
         shuffle=True,
         epochs=epochs,
