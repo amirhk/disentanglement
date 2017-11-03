@@ -36,11 +36,13 @@ from importDatasets import importMnistAndSvhn
      x_train_2, y_train, x_test_1, y_test_1,
      x_test_2, y_test_2, num_classes) = importMnistAndSvhn()
 
+
 training_size = 40000
 x_val_1 = x_train_1[training_size:,:]
 x_train_1 =x_train_1[:training_size,:]
 
 y_val = y_train[training_size:,:]
+
 y_train = y_train[:training_size,:]
 
 x_val_2 = x_train_2[training_size:,:]
@@ -48,6 +50,7 @@ x_train_2 =x_train_2[:training_size,:]
 
 x_test_2 = x_test_2[:10000,:]
 y_test_2 = y_test_2[:10000,:]
+
 
 
 batch_size = 100
@@ -478,4 +481,3 @@ model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
-

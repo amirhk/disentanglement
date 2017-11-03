@@ -224,15 +224,15 @@ def importMnistAndSvhn():
   assert(len(unique_classes_1) == len(unique_classes_2))
   num_classes = num_classes_1
 
-  count_from_each_class = 4500
+  count_from_each_class = 100
 
   ordered_indices_dataset_1 = np.array(())
   ordered_indices_dataset_2 = np.array(())
 
   for i in range(len(unique_classes_2)):
-    print('\t[INFO] found %d samples of class %d in dataset 1' % (len(np.where(y_train_1 == i)[0]), i))
-    print('\t[INFO] found %d samples of class %d in dataset 2' % (len(np.where(y_train_2 == i)[0]), i))
-    print('')
+    # print('\t[INFO] found %d samples of class %d in dataset 1' % (len(np.where(y_train_1 == i)[0]), i))
+    # print('\t[INFO] found %d samples of class %d in dataset 2' % (len(np.where(y_train_2 == i)[0]), i))
+    # print('')
     ordered_indices_dataset_1 = np.concatenate((ordered_indices_dataset_1, np.where(y_train_1 == i)[0][:count_from_each_class]), axis = 0)
     ordered_indices_dataset_2 = np.concatenate((ordered_indices_dataset_2, np.where(y_train_2 == i)[0][:count_from_each_class]), axis = 0)
 
