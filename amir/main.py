@@ -424,7 +424,7 @@ class ACCURACY(Callback):
         ii= ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
-          print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n'.format(ii, ACC_1, ACC_2), file=text_file)
+          print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n\n\n'.format(ii, ACC_1, ACC_2), file=text_file)
 
 
 accuracy = ACCURACY()
