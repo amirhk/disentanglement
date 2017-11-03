@@ -252,7 +252,7 @@ def scheduler(epoch):
     if epoch > 100:
         return float(0.0003)
     else:
-        return float(0.001) # initial_lrate
+        return float(0.0001) # initial_lrate
 
 change_lr = LearningRateScheduler(scheduler)
 
