@@ -39,14 +39,14 @@ from importDatasets import importMnistAndSvhn
 
 training_size = 40000
 x_val_1 = x_train_1[training_size:,:]
-x_train_1 =x_train_1[:training_size,:]
+x_train_1 = x_train_1[:training_size,:]
 
 y_val = y_train[training_size:,:]
 
 y_train = y_train[:training_size,:]
 
 x_val_2 = x_train_2[training_size:,:]
-x_train_2 =x_train_2[:training_size,:]
+x_train_2 = x_train_2[:training_size,:]
 
 x_test_2 = x_test_2[:10000,:]
 y_test_2 = y_test_2[:10000,:]

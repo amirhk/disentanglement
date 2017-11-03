@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 1000
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.001
+learning_rate = 0.0001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -248,9 +248,9 @@ def scheduler(epoch):
     #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
     # return float(model.optimizer.lr) # return model.lr.get_value()
     if epoch > 250:
-        return float(0.0001)
+        return float(0.00001)
     if epoch > 100:
-        return float(0.0003)
+        return float(0.00003)
     else:
         return float(0.0001) # initial_lrate
 
@@ -261,7 +261,7 @@ model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
         epochs=epochs,
         batch_size=batch_size,
         validation_data =([x_val_1, x_val_2, y_val, y_val], [y_val, y_val]),
-        callbacks = [accuracy])
+        callbacks = [accuracy, change_lr])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
