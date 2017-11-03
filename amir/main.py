@@ -291,7 +291,7 @@ def vae_loss(x, _x_decoded):
 #    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
     kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) )
     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
-    y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
+    y_loss_2 = 1000 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
     return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
 
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
