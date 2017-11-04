@@ -260,7 +260,7 @@ accuracy = ACCURACY()
 # model_weights = pickle.load(open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
 
-model.fit([x_train_1, x_train_2, y_train_1, y_train_2], [y_train_1, y_train_2],
+model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
