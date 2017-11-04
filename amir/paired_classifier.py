@@ -257,14 +257,15 @@ def scheduler(epoch):
 change_lr = LearningRateScheduler(scheduler)
 
 # model.fit([np.tile(x_train_1[:100,:], (400,1)), x_train_2, np.tile(y_train[:100], (400,1)), y_train], [y_train, y_train],
-x_train_1 = x_train_1
-y_train_1 = y_train
-x_train_2 = np.tile(x_train_2[:1000,:], (40,1))
-y_train_2 = np.tile(y_train[:1000], (40,1))
+# x_train_1 = x_train_1
+# y_train_1 = y_train
+# x_train_2 = np.tile(x_train_2[:1000,:], (40,1))
+# y_train_2 = np.tile(y_train[:1000], (40,1))
 model.fit([x_train_1, x_train_2, y_train_1, y_train_2], [y_train_1, y_train_2],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
+        verbose=1,
         validation_data =([x_val_1, x_val_2, y_val, y_val], [y_val, y_val]),
         callbacks = [accuracy, change_lr])
 

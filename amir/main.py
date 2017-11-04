@@ -14,7 +14,7 @@ from keras import backend as K
 from keras import objectives , utils,optimizers
 from keras.datasets import mnist
 from mpl_toolkits.mplot3d import Axes3D
-from keras.callbacks import Callback
+from keras.callbacks import Callback, LearningRateScheduler
 import tensorflow as tf
 
 import sys
@@ -291,12 +291,12 @@ def vae_loss(x, _x_decoded):
 #    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
     kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) )
     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
-    y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
+    y_loss_2 = 1000 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
     return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
 
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
 
-model.compile(optimizer=my_adam, loss=vae_loss)
+model.compile(optimizer=my_adam, loss=vae_loss, metrics=['accuracy'])
 
 ############################################################################
 ############################################################################
@@ -469,12 +469,31 @@ reconstruction = RECONSTRUCTION()
 # model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
 
+def scheduler(epoch):
+    # initial_lrate = 0.001
+    # # if epoch == 0:
+    # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
+    # if epoch == 25:
+    #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
+    # elif epoch == 50:
+    #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
+    # return float(model.optimizer.lr) # return model.lr.get_value()
+    if epoch > 250:
+        return float(0.00001)
+    if epoch > 100:
+        return float(0.00003)
+    else:
+        return float(0.0001) # initial_lrate
+
+change_lr = LearningRateScheduler(scheduler)
+
 model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_train],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
+        verbose=1,
         validation_data =([x_val_1,x_val_2,y_val,y_val],[x_val_1,x_val_2,y_val,y_val]),
-        callbacks = [accuracy,reconstruction])
+        callbacks = [accuracy, reconstruction, change_lr])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))

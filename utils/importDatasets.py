@@ -221,20 +221,29 @@ def importMnistAndSvhn():
   unique_classes_1 = np.unique(y_train_1);
   unique_classes_2 = np.unique(y_train_2);
 
-  assert(len(unique_classes_1) == len(unique_classes_2))
+  assert(len(unique_classes_1) == len(unique_classes_2) == num_classes_1 == num_classes_2)
   num_classes = num_classes_1
 
-  count_from_each_class = 4500
+  count_from_class_1 = 4500
+  count_from_class_2 = 100
+  count_ratio = count_from_class_1 / count_from_class_2
+  assert(int(count_ratio) == count_ratio)
+  count_ratio = int(count_ratio)
 
   ordered_indices_dataset_1 = np.array(())
   ordered_indices_dataset_2 = np.array(())
 
-  for i in range(len(unique_classes_2)):
+  for i in range(num_classes):
     # print('\t[INFO] found %d samples of class %d in dataset 1' % (len(np.where(y_train_1 == i)[0]), i))
     # print('\t[INFO] found %d samples of class %d in dataset 2' % (len(np.where(y_train_2 == i)[0]), i))
     # print('')
-    ordered_indices_dataset_1 = np.concatenate((ordered_indices_dataset_1, np.where(y_train_1 == i)[0][:count_from_each_class]), axis = 0)
-    ordered_indices_dataset_2 = np.concatenate((ordered_indices_dataset_2, np.where(y_train_2 == i)[0][:count_from_each_class]), axis = 0)
+
+    dataset_1_indices_for_class_i = np.where(y_train_1 == i)[0][:count_from_class_1]
+    dataset_2_indices_for_class_i = np.where(y_train_2 == i)[0][:count_from_class_2]
+    dataset_2_indices_for_class_i = np.tile(dataset_2_indices_for_class_i, (count_ratio)) # repeat to match size of indices selected from both datasets
+
+    ordered_indices_dataset_1 = np.concatenate((ordered_indices_dataset_1, dataset_1_indices_for_class_i), axis = 0)
+    ordered_indices_dataset_2 = np.concatenate((ordered_indices_dataset_2, dataset_2_indices_for_class_i), axis = 0)
 
   assert(ordered_indices_dataset_1.shape == ordered_indices_dataset_2.shape)
 
