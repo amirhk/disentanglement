@@ -272,8 +272,9 @@ def scheduler(epoch):
 
 change_lr = LearningRateScheduler(scheduler)
 
-# x_train_2 = np.tile(x_train_2[:1000,:], (40,1))
-# y_train = np.tile(y_train[:1000], (40,1))
+# model_weights = pickle.load(open('single_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+# model.set_weights(model_weights)
+
 model.fit([x_train_2, y_train], [y_train],
         shuffle=True,
         epochs=epochs,
@@ -282,5 +283,5 @@ model.fit([x_train_2, y_train], [y_train],
         callbacks = [accuracy, change_lr])
 
 model_weights = model.get_weights()
-pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
+pickle.dump((model_weights), open('single_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
 

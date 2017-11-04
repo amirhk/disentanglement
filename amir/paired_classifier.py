@@ -238,37 +238,36 @@ class ACCURACY(Callback):
 
 accuracy = ACCURACY()
 
-def scheduler(epoch):
-    # initial_lrate = 0.001
-    # # if epoch == 0:
-    # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
-    # if epoch == 25:
-    #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
-    # elif epoch == 50:
-    #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
-    # return float(model.optimizer.lr) # return model.lr.get_value()
-    if epoch > 250:
-        return float(0.00001)
-    if epoch > 100:
-        return float(0.00003)
-    else:
-        return float(0.0001) # initial_lrate
+# def scheduler(epoch):
+#     # initial_lrate = 0.001
+#     # # if epoch == 0:
+#     # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
+#     # if epoch == 25:
+#     #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
+#     # elif epoch == 50:
+#     #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
+#     # return float(model.optimizer.lr) # return model.lr.get_value()
+#     if epoch > 250:
+#         return float(0.00001)
+#     if epoch > 100:
+#         return float(0.00003)
+#     else:
+#         return float(0.0001) # initial_lrate
 
-change_lr = LearningRateScheduler(scheduler)
+# change_lr = LearningRateScheduler(scheduler)
 
-# model.fit([np.tile(x_train_1[:100,:], (400,1)), x_train_2, np.tile(y_train[:100], (400,1)), y_train], [y_train, y_train],
-# x_train_1 = x_train_1
-# y_train_1 = y_train
-# x_train_2 = np.tile(x_train_2[:1000,:], (40,1))
-# y_train_2 = np.tile(y_train[:1000], (40,1))
+
+# model_weights = pickle.load(open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+# model.set_weights(model_weights)
+
 model.fit([x_train_1, x_train_2, y_train_1, y_train_2], [y_train_1, y_train_2],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
         verbose=1,
         validation_data =([x_val_1, x_val_2, y_val, y_val], [y_val, y_val]),
-        callbacks = [accuracy, change_lr])
+        callbacks = [accuracy])
 
 model_weights = model.get_weights()
-pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
+pickle.dump((model_weights), open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
 
