@@ -255,14 +255,6 @@ class ACCURACY(Callback):
 accuracy = ACCURACY()
 
 def scheduler(epoch):
-    # initial_lrate = 0.001
-    # # if epoch == 0:
-    # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
-    # if epoch == 25:
-    #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
-    # elif epoch == 50:
-    #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
-    # return float(model.optimizer.lr) # return model.lr.get_value()
     if epoch > 200:
         return float(0.0001)
     if epoch > 100:

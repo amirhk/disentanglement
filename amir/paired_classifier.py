@@ -230,7 +230,7 @@ class ACCURACY(Callback):
         ACC_1 = 1 - n_error_1 / len(not_hot_y_test_1)
         ACC_2 = 1 - n_error_2 / len(not_hot_y_test_1)
         Accuracy[ii,:] = [ACC_1 , ACC_2]
-        print('\n accuracy_mnist = ', ACC_1, ' accuracy_svhn = ', ACC_2)
+        print('\n accuracy_mnist = ', ACC_1, ' accuracy_svhn = ', ACC_2, '\n\n')
         ii= ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
@@ -239,20 +239,12 @@ class ACCURACY(Callback):
 accuracy = ACCURACY()
 
 # def scheduler(epoch):
-#     # initial_lrate = 0.001
-#     # # if epoch == 0:
-#     # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
-#     # if epoch == 25:
-#     #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
-#     # elif epoch == 50:
-#     #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
-#     # return float(model.optimizer.lr) # return model.lr.get_value()
-#     if epoch > 250:
-#         return float(0.00001)
+#     if epoch > 200:
+#         return float(0.0001)
 #     if epoch > 100:
-#         return float(0.00003)
+#         return float(0.0003)
 #     else:
-#         return float(0.0001) # initial_lrate
+#         return float(0.001) # initial_lrate
 
 # change_lr = LearningRateScheduler(scheduler)
 

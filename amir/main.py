@@ -107,7 +107,6 @@ def sampling(args):
     return z_mean + K.exp(z_log_var / 2) * epsilon
 
 def build_z(args):
-
     z_1 ,z_2 = args
     return tf.concat([z_1,z_2],1)
 
@@ -456,7 +455,7 @@ class ACCURACY(Callback):
         ACC_1 = 1 - n_error_1 / 10000
         ACC_2 = 1 - n_error_2 / 10000
         Accuracy[ii,:] = [ACC_1 , ACC_2]
-        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2)
+        print('\n accuracy_mnist = ', ACC_1 , ' accuracy_svhn = ', ACC_2, '\n\n')
         ii= ii + 1
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
@@ -467,37 +466,72 @@ accuracy = ACCURACY()
 
 class RECONSTRUCTION(Callback):
 
+    def getFigureOfSamplesForInput(self, x_samples, image_dim, image_channels, number_of_sample_images, grid_x=range(10), grid_y=range(10)):
+        if image_channels == 1:
+            figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images))
+            for i in range(number_of_sample_images):
+                for j in range(number_of_sample_images):
+                    digit = x_samples[i * number_of_sample_images + j].reshape(image_dim, image_dim)
+                    figure[i * image_dim: (i + 1) * image_dim,
+                           j * image_dim: (j + 1) * image_dim] = digit
+            return figure
+        elif image_channels == 3:
+            figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images, image_channels))
+            for i in range(number_of_sample_images):
+                for j in range(number_of_sample_images):
+                    digit = x_samples[i * number_of_sample_images + j, :].reshape(image_dim, image_dim, image_channels)
+                    figure[i * image_dim: (i + 1) * image_dim,
+                           j * image_dim: (j + 1) * image_dim, :] = digit
+            return figure
+
+
+    def plotAndSaveOriginalAndReconstructedImages(self, original_x, reconstructed_x, image_dim, image_channels, file_name):
+        number_of_sample_images = 10
+
+        plt.figure()
+
+        ax = plt.subplot(1,2,1)
+        x_samples = original_x
+        canvas = self.getFigureOfSamplesForInput(x_samples, image_dim, image_channels, number_of_sample_images)
+        plt.imshow(canvas)
+        ax.set_title('Original Images', fontsize=8)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        ax = plt.subplot(1,2,2)
+        x_samples = reconstructed_x
+        canvas = self.getFigureOfSamplesForInput(x_samples, image_dim, image_channels, number_of_sample_images)
+        plt.imshow(canvas)
+        ax.set_title('Reconstructed Images', fontsize=8)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        plt.savefig(file_name)
+        plt.close('all')
+
+
     def on_epoch_end(self,batch,logs = {}):
 
         timestamp_string = str(datetime.now().strftime('%Y-%m-%d_____%H-%M-%S'))
         image_file_name_1 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_1.png'
         image_file_name_2 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_2.png'
 
-        reconstructed_x_test_1, reconstructed_x_test_2,_, _ = vaeencoder.predict([x_test_1,x_test_2], batch_size = batch_size)
+        reconstructed_x_test_1 = model.predict([x_test_1], batch_size = batch_size)
+        reconstructed_x_test_2 = model.predict([x_test_2], batch_size = batch_size)
 
-        tmp = 4
-        plt.figure(figsize=(tmp + 1, tmp + 1))
-        for i in range(tmp):
-          for j in range(tmp):
-            ax = plt.subplot(tmp, tmp, i*tmp+j+1)
-            # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-            plt.imshow(reconstructed_x_test_1[i*tmp+j].reshape(28,28),cmap = 'Greys_r')
-            ax.get_xaxis().set_visible(False)
-            ax.get_yaxis().set_visible(False)
-        plt.savefig(image_file_name_1)
-        plt.close('all')
+        original_x = x_test_1
+        reconstructed_x = reconstructed_x_test_1
+        image_dim = 28
+        image_channels = 1
+        file_name = image_file_name_1
+        self.plotAndSaveOriginalAndReconstructedImages(original_x, reconstructed_x, image_dim, image_channels, file_name)
 
-        tmp = 4
-        plt.figure(figsize=(tmp + 1, tmp + 1))
-        for i in range(tmp):
-          for j in range(tmp):
-            ax = plt.subplot(tmp, tmp, i*tmp+j+1)
-            # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-            plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
-            ax.get_xaxis().set_visible(False)
-            ax.get_yaxis().set_visible(False)
-        plt.savefig(image_file_name_2)
-        plt.close('all')
+        original_x = x_test_2
+        reconstructed_x = reconstructed_x_test_2
+        image_dim = 32
+        image_channels = 3
+        file_name = image_file_name_2
+        self.plotAndSaveOriginalAndReconstructedImages(original_x, reconstructed_x, image_dim, image_channels, file_name)
 
 reconstruction = RECONSTRUCTION()
 
@@ -505,20 +539,12 @@ reconstruction = RECONSTRUCTION()
 # model.set_weights(model_weights)
 
 def scheduler(epoch):
-    # initial_lrate = 0.001
-    # # if epoch == 0:
-    # #     model.optimizer.lr = 0.001 # model.lr.set_value(0.001)
-    # if epoch == 25:
-    #     model.optimizer.lr = 0.0003 # model.lr.set_value(0.0003)
-    # elif epoch == 50:
-    #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
-    # return float(model.optimizer.lr) # return model.lr.get_value()
-    if epoch > 250:
-        return float(0.00001)
+    if epoch > 200:
+        return float(0.0001)
     if epoch > 100:
-        return float(0.00003)
+        return float(0.0003)
     else:
-        return float(0.0001) # initial_lrate
+        return float(0.001) # initial_lrate
 
 change_lr = LearningRateScheduler(scheduler)
 
