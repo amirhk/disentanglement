@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 100
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.001
+learning_rate = 0.0003
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -534,8 +534,8 @@ class RECONSTRUCTION(Callback):
 
 reconstruction = RECONSTRUCTION()
 
-# model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
-# model.set_weights(model_weights)
+model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+model.set_weights(model_weights)
 
 # def scheduler(epoch):
 #     if epoch > 200:
