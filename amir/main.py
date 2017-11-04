@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 1000
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.0001
+learning_rate = 0.001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -537,23 +537,23 @@ reconstruction = RECONSTRUCTION()
 # model_weights = pickle.load(open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
 
-def scheduler(epoch):
-    if epoch > 200:
-        return float(0.0001)
-    if epoch > 100:
-        return float(0.0003)
-    else:
-        return float(0.001) # initial_lrate
+# def scheduler(epoch):
+#     if epoch > 200:
+#         return float(0.0001)
+#     if epoch > 100:
+#         return float(0.0003)
+#     else:
+#         return float(0.001) # initial_lrate
 
-change_lr = LearningRateScheduler(scheduler)
+# change_lr = LearningRateScheduler(scheduler)
 
 model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_train],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
-        verbose=0,
+        verbose=1,
         validation_data =([x_val_1,x_val_2,y_val,y_val],[x_val_1,x_val_2,y_val,y_val]),
-        callbacks = [accuracy, reconstruction, change_lr])
+        callbacks = [accuracy, reconstruction])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
