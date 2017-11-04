@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 1000
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.0001
+learning_rate = 0.001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
