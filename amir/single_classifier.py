@@ -51,8 +51,8 @@ y_test_2 = y_test_2[:10000,:]
 
 
 batch_size = 100
-latent_dim_x_1 = 10
-latent_dim_x_2 = 10
+# latent_dim_x_1 = 10
+# latent_dim_x_2 = 10
 latent_dim_y = 10
 epochs = 300
 intermediate_dim = 500
@@ -105,7 +105,7 @@ h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
 h_e_1_6 = MaxPooling2D((2, 2), padding='same')
 h_e_1_7 = Flatten()
 
-z_1 = Dense(latent_dim_x_1)
+z_1 = Dense(latent_dim_y)
 
 ####### Autoencoder 2 Network ###########################################################################
 
@@ -120,7 +120,7 @@ h_e_2_6 = MaxPooling2D((2, 2), padding='same')
 h_e_2_7 = Conv2D(8, (3, 3), activation='relu', padding='same')
 h_e_2_8 = Flatten()
 
-z_2 = Dense(latent_dim_x_2)
+z_2 = Dense(latent_dim_y)
 
 ## Classifier Network ###################################################################################
 
