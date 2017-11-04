@@ -516,8 +516,7 @@ class RECONSTRUCTION(Callback):
         image_file_name_1 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_1.png'
         image_file_name_2 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_2.png'
 
-        reconstructed_x_test_1 = model.predict([x_test_1], batch_size = batch_size)
-        reconstructed_x_test_2 = model.predict([x_test_2], batch_size = batch_size)
+        reconstructed_x_test_1, reconstructed_x_test_2, _, _ = vaeencoder.predict([x_test_1, x_test_2], batch_size = batch_size)
 
         original_x = x_test_1
         reconstructed_x = reconstructed_x_test_1
