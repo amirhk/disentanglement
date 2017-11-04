@@ -54,10 +54,10 @@ batch_size = 100
 latent_dim_x_1 = 10
 latent_dim_x_2 = 10
 latent_dim_y = 10
-epochs = 200
+epochs = 100
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.0003
+learning_rate = 0.001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -238,15 +238,15 @@ class ACCURACY(Callback):
 
 accuracy = ACCURACY()
 
-def scheduler(epoch):
-    # if epoch > 200:
-    #     return float(0.0001)
-    if epoch > 100:
-        return float(0.0003)
-    else:
-        return float(0.001) # initial_lrate
+# def scheduler(epoch):
+#     # if epoch > 200:
+#     #     return float(0.0001)
+#     if epoch > 100:
+#         return float(0.0003)
+#     else:
+#         return float(0.001) # initial_lrate
 
-change_lr = LearningRateScheduler(scheduler)
+# change_lr = LearningRateScheduler(scheduler)
 
 
 # model_weights = pickle.load(open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
@@ -258,7 +258,7 @@ model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
         batch_size=batch_size,
         verbose=1,
         validation_data =([x_val_1, x_val_2, y_val, y_val], [y_val, y_val]),
-        callbacks = [accuracy, change_lr])
+        callbacks = [accuracy])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
