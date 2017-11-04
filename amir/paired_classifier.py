@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 100
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.001
+learning_rate = 0.0003
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -257,8 +257,8 @@ accuracy = ACCURACY()
 # change_lr = LearningRateScheduler(scheduler)
 
 
-# model_weights = pickle.load(open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
-# model.set_weights(model_weights)
+model_weights = pickle.load(open('paired_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
+model.set_weights(model_weights)
 
 model.fit([x_train_1, x_train_2, y_train, y_train], [y_train, y_train],
         shuffle=True,
