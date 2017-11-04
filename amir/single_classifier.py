@@ -254,15 +254,15 @@ class ACCURACY(Callback):
 
 accuracy = ACCURACY()
 
-# def scheduler(epoch):
-#     if epoch > 200:
-#         return float(0.00001)
-#     if epoch > 100:
-#         return float(0.00003)
-#     else:
-#         return float(0.0001) # initial_lrate
+def scheduler(epoch):
+    if epoch > 200:
+        return float(0.00001)
+    if epoch > 100:
+        return float(0.00003)
+    else:
+        return float(0.0001) # initial_lrate
 
-# change_lr = LearningRateScheduler(scheduler)
+change_lr = LearningRateScheduler(scheduler)
 
 # model_weights = pickle.load(open('single_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
@@ -271,8 +271,9 @@ model.fit([x_train_2, y_train], [y_train],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
+        verbose=1,
         validation_data =([x_val_2, y_val], [y_val]),
-        callbacks = [accuracy])
+        callbacks = [accuracy, change_lr])
 
 model_weights = model.get_weights()
 pickle.dump((model_weights), open('single_classifier' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'wb'))
