@@ -54,7 +54,7 @@ batch_size = 100
 latent_dim_x_1 = 10
 latent_dim_x_2 = 10
 latent_dim_y = 10
-epochs = 1000
+epochs = 300
 intermediate_dim = 500
 epsilon_std = 1.0
 learning_rate = 0.0001
@@ -95,17 +95,17 @@ def build_z(args):
 
 ########## Autoencoder 1 Network ########################################################################
 
-# x_1 = Input(batch_shape=(batch_size, original_dim_1))
-# x_reshaped_1 = Reshape((28,28,1))
-# h_e_1_1 = Conv2D(32, (3, 3), activation='relu', padding='same')
-# h_e_1_2 = MaxPooling2D((2, 2), padding='same')
-# h_e_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
-# h_e_1_4 = MaxPooling2D((2, 2), padding='same')
-# h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
-# h_e_1_6 = MaxPooling2D((2, 2), padding='same')
-# h_e_1_7 = Flatten()
+x_1 = Input(batch_shape=(batch_size, original_dim_1))
+x_reshaped_1 = Reshape((28,28,1))
+h_e_1_1 = Conv2D(32, (3, 3), activation='relu', padding='same')
+h_e_1_2 = MaxPooling2D((2, 2), padding='same')
+h_e_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
+h_e_1_4 = MaxPooling2D((2, 2), padding='same')
+h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_1_6 = MaxPooling2D((2, 2), padding='same')
+h_e_1_7 = Flatten()
 
-# z_1 = Dense(latent_dim_x_1)
+z_1 = Dense(latent_dim_x_1)
 
 ####### Autoencoder 2 Network ###########################################################################
 
@@ -137,16 +137,16 @@ yy_2 = Input(batch_shape = (batch_size, 10))
 
 ##### Build model 1 #####################################################################################
 
-# _x_reshaped_1 = x_reshaped_1(x_1)
-# _h_e_1_1 = h_e_1_1(_x_reshaped_1)
-# _h_e_1_2 = h_e_1_2(_h_e_1_1)
-# _h_e_1_3 = h_e_1_3(_h_e_1_2)
-# _h_e_1_4 = h_e_1_4(_h_e_1_3)
-# _h_e_1_5 = h_e_1_5(_h_e_1_4)
-# _h_e_1_6 = h_e_1_6(_h_e_1_5)
-# _h_e_1_7 = h_e_1_7(_h_e_1_6)
+_x_reshaped_1 = x_reshaped_1(x_1)
+_h_e_1_1 = h_e_1_1(_x_reshaped_1)
+_h_e_1_2 = h_e_1_2(_h_e_1_1)
+_h_e_1_3 = h_e_1_3(_h_e_1_2)
+_h_e_1_4 = h_e_1_4(_h_e_1_3)
+_h_e_1_5 = h_e_1_5(_h_e_1_4)
+_h_e_1_6 = h_e_1_6(_h_e_1_5)
+_h_e_1_7 = h_e_1_7(_h_e_1_6)
 
-# _z_1 = z_1(_h_e_1_7)
+_z_1 = z_1(_h_e_1_7)
 
 ##### Build model 2 #####################################################################################
 
@@ -164,13 +164,13 @@ _z_2 = z_2(_h_e_2_8)
 
 ##### Build Classifier ##################################################################################
 
-# _h_d_y_1_1 = h_d_y_1(_z_1)
-# _h_d_y_1_2 = h_d_y_2(_h_d_y_1_1)
-# _h_d_y_1_3 = h_d_y_3(_h_d_y_1_2)
-# _h_d_y_1_4 = h_d_y_4(_h_d_y_1_3)
-# _h_d_y_1_5 = h_d_y_5(_h_d_y_1_4)
-# _h_d_y_1_6 = h_d_y_6(_h_d_y_1_5)
-# _y_decoded_1 = y_decoded(_h_d_y_1_6)
+_h_d_y_1_1 = h_d_y_1(_z_1)
+_h_d_y_1_2 = h_d_y_2(_h_d_y_1_1)
+_h_d_y_1_3 = h_d_y_3(_h_d_y_1_2)
+_h_d_y_1_4 = h_d_y_4(_h_d_y_1_3)
+_h_d_y_1_5 = h_d_y_5(_h_d_y_1_4)
+_h_d_y_1_6 = h_d_y_6(_h_d_y_1_5)
+_y_decoded_1 = y_decoded(_h_d_y_1_6)
 
 _h_d_y_2_1 = h_d_y_1(_z_2)
 _h_d_y_2_2 = h_d_y_2(_h_d_y_2_1)
@@ -263,12 +263,12 @@ def scheduler(epoch):
     # elif epoch == 50:
     #     model.optimizer.lr = 0.0001 # model.lr.set_value(0.0001)
     # return float(model.optimizer.lr) # return model.lr.get_value()
-    if epoch > 250:
-        return float(0.00001)
-    if epoch > 50:
-        return float(0.00003)
+    if epoch > 200:
+        return float(0.0001)
+    if epoch > 100:
+        return float(0.0003)
     else:
-        return float(0.0001) # initial_lrate
+        return float(0.001) # initial_lrate
 
 change_lr = LearningRateScheduler(scheduler)
 
