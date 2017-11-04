@@ -489,6 +489,50 @@ pickle.dump((model_weights), open('weights_vaesdr_' + str(latent_dim_y) + 'd_tra
 
 
 
-encoder = Model(inputs = [x_1,x_2],outputs = [_z_mean_1_1_,,_z_mean_1_2_,,_z_mean_2_1_,_z_mean_2_2_])
 
-samples_from_content_1= sampling()
+
+encoder_1 = Model(inputs = [x_1],outputs = [_z_mean_1_1,_z_log_var_1_1,_z_mean_1_2])
+encoder_2 = Model(inputs = [x_2],outputs = [_z_mean_2_1,_z_log_var_2_1,_z_mean_2_2_])
+
+z_m_1_1 , z_var_1_1, z_m_1_2 = encoder_1.predict([x_test_1],batch_size = batch_size) 
+z_m_2_1 , z_var_2_1, z_m_2_2 = encoder_2.predict([x_test_2],batch_size = batch_size) 
+
+samples_from_1_1 = np.random.randn(10000,latent_dim_x_1) 
+samples_from_2_1 = np.random.randn(10000,latent_dim_x_2)
+
+
+generator_input_1 = np.concatenate((samples_from_1_1,z_m_2_2),axis = 1)
+generator_input_2 = np.concatenate((samples_from_2_1,z_m_1_2),axis = 1)
+
+z_1_input = Input(shape= (latent_dim_x_1+latent_dim_y,))
+_h_g_x_1_1_ = h_d_x_1_1(z_1_input)
+_h_g_x_1_2_ = h_d_x_1_2(_h_g_x_1_1_)
+_h_g_x_1_3_ = h_d_x_1_3(_h_g_x_1_2_)
+_h_g_x_1_4_ = h_d_x_1_4(_h_g_x_1_3_)
+_h_g_x_1_5_ = h_d_x_1_5(_h_g_x_1_4_)
+_h_g_x_1_6_ = h_d_x_1_6(_h_g_x_1_5_)
+_h_g_x_1_7_ = h_d_x_1_7(_h_g_x_1_6_)
+_h_g_x_1_8_ = h_d_x_1_8(_h_g_x_1_7_)
+
+_x_generated_reshaped_1_ = x_decoded_reshaped_1(_h_g_x_1_8_)
+_x_generated_1_ = x_decoded_1(_x_generated_reshaped_1_)
+generator_1 = Model(z_1_input,_x_generated_1_)
+
+generated_samples_1 = generator_1.predict(generator_input_1,batch_size = batch_size)
+
+z_2_input = Input(shape= (latent_dim_x_2+latent_dim_y,))
+_h_g_x_2_1_ = h_d_x_2_1(z_2_input)
+_h_g_x_2_2_ = h_d_x_2_2(_h_g_x_2_1_)
+_h_g_x_2_3_ = h_d_x_2_3(_h_g_x_2_2_)
+_h_g_x_2_4_ = h_d_x_2_4(_h_g_x_2_3_)
+_h_g_x_2_5_ = h_d_x_2_5(_h_g_x_2_4_)
+_h_g_x_2_6_ = h_d_x_2_6(_h_g_x_2_5_)
+_h_g_x_2_7_ = h_d_x_2_7(_h_g_x_2_6_)
+_h_g_x_2_8_ = h_d_x_2_8(_h_g_x_2_7_)
+
+_x_generated_reshaped_2_ = x_decoded_reshaped_2(_h_g_x_2_8_)
+_x_generated_2_ = x_decoded_2(_x_generated_reshaped_2_)
+generator_2 = Model(z_2_input,_x_generated_2_)
+
+generated_samples_2 = generator_2.predict(generator_input_2,batch_size = batch_size)
+
