@@ -51,7 +51,7 @@ y_test_2 = y_test_2[:10000,:]
 
 
 batch_size = 100
-latent_dim_x_1 =5
+latent_dim_x_1 = 10
 latent_dim_x_2 = 10
 latent_dim_y = 10
 epochs = 100
