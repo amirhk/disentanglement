@@ -302,28 +302,29 @@ def vae_loss(x, _x_decoded):
 
 
 
-# ############################################################################
-# ############################################################################
+############################################################################
+############################################################################
 
-# def mnist_model_loss(x, _x_decoded):
-#     xent_loss_1 = original_dim_1 * objectives.binary_crossentropy(x_1, _x_decoded_1)
-#     kl_loss_1 = - 0.5 * K.sum(1 + _z_log_var_1_1 - K.square(_z_mean_1_1) - K.exp(_z_log_var_1_1), axis=-1)
-#     kl_loss_2 = - 0.5 * K.sum(1 + _z_log_var_1_2 - K.square(_z_mean_1_2) - K.exp(_z_log_var_1_2), axis=-1)
-#     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
-#     return xent_loss_1 + kl_loss_1 + kl_loss_2 + y_loss_1
+def mnist_model_loss(x, _x_decoded):
+    xent_loss_1 = original_dim_1 * objectives.binary_crossentropy(x_1, _x_decoded_1)
+    kl_loss_1 = - 0.5 * K.sum(1 + _z_log_var_1_1 - K.square(_z_mean_1_1) - K.exp(_z_log_var_1_1), axis=-1)
+    kl_loss_2 = - 0.5 * K.sum(1 + _z_log_var_1_2 - K.square(_z_mean_1_2) - K.exp(_z_log_var_1_2), axis=-1)
+    y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
+    return xent_loss_1 + kl_loss_1 + kl_loss_2 + y_loss_1
 
-# mnist_model = Model(inputs = [x_1, yy_1], outputs = [_x_decoded_1, _y_decoded_1])
-# my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
-# mnist_model.compile(optimizer=my_adam, loss=vae_loss, metrics=['accuracy'])
-# mnist_model.fit([x_train_1, y_train], [x_train_1, y_train],
-#         shuffle=True,
-#         epochs=25,
-#         batch_size=batch_size,
-#         verbose=1,
-#         validation_data =([x_val_1, y_val], [x_val_1, y_val]),
-#         callbacks = [accuracy, reconstruction, change_lr])
-# ############################################################################
-# ############################################################################
+mnist_model = Model(inputs = [x_1, yy_1], outputs = [_x_decoded_1, _y_decoded_1])
+my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
+mnist_model.compile(optimizer=my_adam, loss=mnist_model_loss, metrics=['accuracy'])
+mnist_model.fit([x_train_1, y_train], [x_train_1, y_train],
+        shuffle=True,
+        epochs=25,
+        batch_size=batch_size,
+        verbose=1,
+        validation_data =([x_val_1, y_val], [x_val_1, y_val]),
+        callbacks = [accuracy, reconstruction, change_lr])
+
+############################################################################
+############################################################################
 
 
 
