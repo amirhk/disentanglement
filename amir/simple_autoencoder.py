@@ -82,6 +82,31 @@ experiment_dir_path = '../experiments/exp' + \
   experiment_name
 os.makedirs(experiment_dir_path)
 
+########## Autoencoder 1 Network ########################################################
+
+x_1 = Input(batch_shape=(batch_size, original_dim_1))
+x_reshaped_1 = Reshape((28,28,1))
+h_e_1_1 = Conv2D(32, (3, 3), activation='relu', padding='same')
+h_e_1_2 = MaxPooling2D((2, 2), padding='same')
+h_e_1_3 = Conv2D(32, (3, 3), activation='relu', padding='same')
+h_e_1_4 = MaxPooling2D((2, 2), padding='same')
+h_e_1_5 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_e_1_6 = MaxPooling2D((2, 2), padding='same')
+h_e_1_7 = Flatten()
+
+z_1 = Dense(latent_dim_x_1)
+
+h_d_x_1_1 = Dense(4*4*8, activation = 'relu')
+h_d_x_1_2 = Reshape((4,4,8))
+h_d_x_1_3 = Conv2D(16, (3, 3), activation='relu', padding='same')
+h_d_x_1_4 = UpSampling2D((2, 2))
+h_d_x_1_5 = Conv2D(32, (3, 3), activation='relu', padding='same')
+h_d_x_1_6 = UpSampling2D((2, 2))
+h_d_x_1_7 = Conv2D(32, (3, 3), activation='relu')
+h_d_x_1_8 = UpSampling2D((2, 2))
+x_decoded_reshaped_1 = Conv2D(1, (3, 3), activation='sigmoid', padding='same')
+x_decoded_1 = Flatten()
+
 ####### Autoencoder 2 Network ###########################################################
 
 x_2 = Input(batch_shape=(batch_size, original_dim_2))
@@ -95,7 +120,7 @@ h_e_2_6 = MaxPooling2D((2, 2), padding='same')
 h_e_2_7 = Conv2D(8, (3, 3), activation='relu', padding='same')
 h_e_2_8 = Flatten()
 
-z = Dense(latent_dim_x_2)
+z_2 = Dense(latent_dim_x_2)
 
 h_d_x_2_1 = Dense(4*4*8, activation = 'relu')
 h_d_x_2_2 = Reshape((4,4,8))
@@ -108,6 +133,30 @@ h_d_x_2_8 = UpSampling2D((2, 2))
 x_decoded_reshaped_2 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')
 x_decoded_2 = Flatten()
 
+
+##### Build model 1 #########################################################################################
+_x_reshaped_1 = x_reshaped_1(x_1)
+_h_e_1_1 = h_e_1_1(_x_reshaped_1)
+_h_e_1_2 = h_e_1_2(_h_e_1_1)
+_h_e_1_3 = h_e_1_3(_h_e_1_2)
+_h_e_1_4 = h_e_1_4(_h_e_1_3)
+_h_e_1_5 = h_e_1_5(_h_e_1_4)
+_h_e_1_6 = h_e_1_6(_h_e_1_5)
+_h_e_1_7 = h_e_1_7(_h_e_1_6)
+
+_z_1 = z_1(_h_e_1_7)
+
+_h_d_x_1_1 = h_d_x_1_1(_z_1)
+_h_d_x_1_2 = h_d_x_1_2(_h_d_x_1_1)
+_h_d_x_1_3 = h_d_x_1_3(_h_d_x_1_2)
+_h_d_x_1_4 = h_d_x_1_4(_h_d_x_1_3)
+_h_d_x_1_5 = h_d_x_1_5(_h_d_x_1_4)
+_h_d_x_1_6 = h_d_x_1_6(_h_d_x_1_5)
+_h_d_x_1_7 = h_d_x_1_7(_h_d_x_1_6)
+_h_d_x_1_8 = h_d_x_1_8(_h_d_x_1_7)
+_x_decoded_reshaped_1 = x_decoded_reshaped_1(_h_d_x_1_8)
+_x_decoded_1 = x_decoded_1(_x_decoded_reshaped_1)
+
 ##### Build model 2 #########################################################################################
 _x_reshaped_2 = x_reshaped_2(x_2)
 _h_e_2_1 = h_e_2_1(_x_reshaped_2)
@@ -119,9 +168,9 @@ _h_e_2_6 = h_e_2_6(_h_e_2_5)
 _h_e_2_7 = h_e_2_7(_h_e_2_6)
 _h_e_2_8 = h_e_2_8(_h_e_2_7)
 
-_z = z(_h_e_2_8)
+_z_2 = z_2(_h_e_2_8)
 
-_h_d_x_2_1 = h_d_x_2_1(_z)
+_h_d_x_2_1 = h_d_x_2_1(_z_2)
 _h_d_x_2_2 = h_d_x_2_2(_h_d_x_2_1)
 _h_d_x_2_3 = h_d_x_2_3(_h_d_x_2_2)
 _h_d_x_2_4 = h_d_x_2_4(_h_d_x_2_3)
@@ -137,19 +186,13 @@ _x_decoded_2 = x_decoded_2(_x_decoded_reshaped_2)
 
 def ae_loss(x, _x_decoded):
 
-    # xent_loss_1 = original_dim_1 * objectives.binary_crossentropy(x_1, _x_decoded_1)
-    xent_loss_2 = original_dim_2 * objectives.binary_crossentropy(x_2, _x_decoded_2)
-#     kl_loss_1 = - 0.5 * K.sum(1 + _z_log_var_1_1 - K.square(_z_mean_1_1) - K.exp(_z_log_var_1_1), axis=-1)
-#     kl_loss_2 = - 0.5 * K.sum(1 + _z_log_var_1_2 - K.square(_z_mean_1_2) - K.exp(_z_log_var_1_2), axis=-1)
-#     kl_loss_3 = - 0.5 * K.sum(1 + _z_log_var_2_1 - K.square(_z_mean_2_1) - K.exp(_z_log_var_2_1), axis=-1)
-# #    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
-#     kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) )
-#     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
-#     y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
-#     return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
-    return xent_loss_2
+    xent_loss_1 = original_dim_1 * objectives.binary_crossentropy(x_1, _x_decoded_1)
+    # xent_loss_2 = original_dim_2 * objectives.binary_crossentropy(x_2, _x_decoded_2)
+    return xent_loss_1
+    # return xent_loss_2
 
-model = Model(inputs = [x_2],outputs = [_x_decoded_2])
+model = Model(inputs = [x_1],outputs = [_x_decoded_1])
+# model = Model(inputs = [x_2],outputs = [_x_decoded_2])
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
 model.compile(optimizer=my_adam, loss=ae_loss)
 
@@ -204,71 +247,72 @@ model.compile(optimizer=my_adam, loss=ae_loss)
 
 class RECONSTRUCTION(Callback):
 
-
     def getFigureOfSamplesForInput(self, x_samples, image_dim, image_channels, number_of_sample_images, grid_x=range(10), grid_y=range(10)):
-        figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images, image_channels))
-        for i in range(number_of_sample_images):
-            for j in range(number_of_sample_images):
-                digit = x_samples[i * number_of_sample_images + j, :].reshape(image_dim, image_dim, image_channels)
-                figure[i * image_dim: (i + 1) * image_dim,
-                       j * image_dim: (j + 1) * image_dim, :] = digit
-        return figure
+        if image_channels == 1:
+            figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images))
+            for i in range(number_of_sample_images):
+                for j in range(number_of_sample_images):
+                    digit = x_samples[i * number_of_sample_images + j].reshape(image_dim, image_dim)
+                    figure[i * image_dim: (i + 1) * image_dim,
+                           j * image_dim: (j + 1) * image_dim] = digit
+            return figure
+        elif image_channels == 3:
+            figure = np.zeros((image_dim * number_of_sample_images, image_dim * number_of_sample_images, image_channels))
+            for i in range(number_of_sample_images):
+                for j in range(number_of_sample_images):
+                    digit = x_samples[i * number_of_sample_images + j, :].reshape(image_dim, image_dim, image_channels)
+                    figure[i * image_dim: (i + 1) * image_dim,
+                           j * image_dim: (j + 1) * image_dim, :] = digit
+            return figure
+
+
+    def plotAndSaveOriginalAndReconstructedImages(self, original_x, reconstructed_x, image_dim, image_channels, file_name):
+        number_of_sample_images = 10
+
+        plt.figure()
+
+        ax = plt.subplot(1,2,1)
+        x_samples = original_x
+        canvas = self.getFigureOfSamplesForInput(x_samples, image_dim, image_channels, number_of_sample_images)
+        plt.imshow(canvas)
+        ax.set_title('Original Images', fontsize=8)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        ax = plt.subplot(1,2,2)
+        x_samples = reconstructed_x
+        canvas = self.getFigureOfSamplesForInput(x_samples, image_dim, image_channels, number_of_sample_images)
+        plt.imshow(canvas)
+        ax.set_title('Reconstructed Images', fontsize=8)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        plt.savefig(file_name)
+        plt.close('all')
 
 
     def on_epoch_end(self,batch,logs = {}):
 
         timestamp_string = str(datetime.now().strftime('%Y-%m-%d_____%H-%M-%S'))
-        # image_file_name_1 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_1.png'
-        image_file_name_2 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_2.png'
+        image_file_name_1 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_1.png'
+        # image_file_name_2 = experiment_dir_path + '/' + timestamp_string + '_reconstructed_samples_2.png'
 
-        # reconstructed_x_test_1, reconstructed_x_test_2, _, _ = vaeencoder.predict([x_test_1,x_test_2], batch_size = batch_size)
-        reconstructed_x_test_2 = model.predict([x_test_2], batch_size = batch_size)
+        reconstructed_x_test_1 = model.predict([x_test_1], batch_size = batch_size)
+        # reconstructed_x_test_2 = model.predict([x_test_2], batch_size = batch_size)
 
-        # tmp = 4
-        # plt.figure(figsize=(tmp + 1, tmp + 1))
-        # for i in range(tmp):
-        #   for j in range(tmp):
-        #     ax = plt.subplot(tmp, tmp, i*tmp+j+1)
-        #     # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-        #     plt.imshow(reconstructed_x_test_1[i*tmp+j].reshape(28,28),cmap = 'Greys_r')
-        #     ax.get_xaxis().set_visible(False)
-        #     ax.get_yaxis().set_visible(False)
-        # plt.savefig(image_file_name_1)
-        # plt.close('all')
+        original_x = x_test_1
+        reconstructed_x = reconstructed_x_test_1
+        image_dim = 28
+        image_channels = 1
+        file_name = image_file_name_1
+        self.plotAndSaveOriginalAndReconstructedImages(original_x, reconstructed_x, image_dim, image_channels, file_name)
 
-        # tmp = 10
-        # plt.figure(figsize=(tmp + 1, tmp + 1))
-        # for i in range(tmp):
-        #   for j in range(tmp):
-        #     ax = plt.subplot(tmp, tmp, i*tmp+j+1)
-        #     # plt.imshow(x_train[i*tmp+j].reshape(sample_dim, sample_dim, sample_channels))
-        #     plt.imshow(reconstructed_x_test_2[i*tmp+j].reshape(32,32,3))
-        #     ax.get_xaxis().set_visible(False)
-        #     ax.get_yaxis().set_visible(False)
-        # plt.savefig(image_file_name_2)
-        # plt.close('all')
-
-        number_of_sample_images = 10
-        plt.figure()
-
-        ax = plt.subplot(1,2,1)
-        x_samples = x_test_2
-        canvas = self.getFigureOfSamplesForInput(x_samples, 32, 3, number_of_sample_images)
-        plt.imshow(canvas)
-        ax.set_title('Original Test Images', fontsize=8)
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-
-        ax = plt.subplot(1,2,2)
-        x_samples = reconstructed_x_test_2
-        canvas = self.getFigureOfSamplesForInput(x_samples, 32, 3, number_of_sample_images)
-        plt.imshow(canvas)
-        ax.set_title('Reconstructed Test Images', fontsize=8)
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-
-        plt.savefig(image_file_name_2)
-        plt.close('all')
+        # original_x = x_test_2
+        # reconstructed_x = reconstructed_x_test_2
+        # image_dim = 32
+        # image_channels = 3
+        # file_name = image_file_name_2
+        # self.plotAndSaveOriginalAndReconstructedImages(original_x, reconstructed_x, image_dim, image_channels, file_name)
 
 
 reconstruction = RECONSTRUCTION()
@@ -295,12 +339,14 @@ change_lr = LearningRateScheduler(scheduler)
 # model_weights = pickle.load(open('simple_autoencoder' + str(latent_dim_y) + 'd_trained_on_' + dataset_name, 'rb'))
 # model.set_weights(model_weights)
 
-# model.fit([x_train_1,x_train_2, y_train,y_train],[x_train_1,x_train_2,y_train,y_train],
-model.fit([x_train_2], [x_train_2],
+
+model.fit([x_train_1], [x_train_1],
+# model.fit([x_train_2], [x_train_2],
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size,
-        validation_data =([x_val_2], [x_val_2]),
+        validation_data =([x_val_1], [x_val_1]),
+        # validation_data =([x_val_2], [x_val_2]),
         callbacks = [change_lr, reconstruction])
 
 model_weights = model.get_weights()

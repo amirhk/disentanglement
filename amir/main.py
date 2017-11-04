@@ -279,7 +279,7 @@ _y_decoded_2 = y_decoded(_h_d_y_2_6)
 
 ###### Define Loss ###########################################################################
 
-model = Model(inputs = [x_1,x_2,yy_1,yy_2],outputs = [_x_decoded_1,_x_decoded_2,_y_decoded_1,_y_decoded_2])
+
 
 def vae_loss(x, _x_decoded):
 
@@ -294,8 +294,45 @@ def vae_loss(x, _x_decoded):
     y_loss_2 = 1000 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
     return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
 
-my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
+# model_1 = Model(inputs = [x_1,x_2,yy_1,yy_2], outputs = [_x_decoded_1,_x_decoded_2,_y_decoded_1,_y_decoded_2])
+# model_1.summary()
 
+# model_2 = Model(inputs = [x_1,yy_1], outputs = [_x_decoded_1,_y_decoded_1])
+# model_2.summary()
+
+
+
+
+# ############################################################################
+# ############################################################################
+
+# def mnist_model_loss(x, _x_decoded):
+#     xent_loss_1 = original_dim_1 * objectives.binary_crossentropy(x_1, _x_decoded_1)
+#     kl_loss_1 = - 0.5 * K.sum(1 + _z_log_var_1_1 - K.square(_z_mean_1_1) - K.exp(_z_log_var_1_1), axis=-1)
+#     kl_loss_2 = - 0.5 * K.sum(1 + _z_log_var_1_2 - K.square(_z_mean_1_2) - K.exp(_z_log_var_1_2), axis=-1)
+#     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
+#     return xent_loss_1 + kl_loss_1 + kl_loss_2 + y_loss_1
+
+# mnist_model = Model(inputs = [x_1, yy_1], outputs = [_x_decoded_1, _y_decoded_1])
+# my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
+# mnist_model.compile(optimizer=my_adam, loss=vae_loss, metrics=['accuracy'])
+# mnist_model.fit([x_train_1, y_train], [x_train_1, y_train],
+#         shuffle=True,
+#         epochs=25,
+#         batch_size=batch_size,
+#         verbose=1,
+#         validation_data =([x_val_1, y_val], [x_val_1, y_val]),
+#         callbacks = [accuracy, reconstruction, change_lr])
+# ############################################################################
+# ############################################################################
+
+
+
+
+
+
+model = Model(inputs = [x_1,x_2,yy_1,yy_2], outputs = [_x_decoded_1,_x_decoded_2,_y_decoded_1,_y_decoded_2])
+my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.1)
 model.compile(optimizer=my_adam, loss=vae_loss, metrics=['accuracy'])
 
 ############################################################################
@@ -408,7 +445,6 @@ class ACCURACY(Callback):
         ii= pickle.load(open('counter', 'rb'))
         _,_, b_1,b_2  = vaeencoder.predict([x_test_1,x_test_2], batch_size = batch_size)
 
-
         Accuracy[ii, 0]
 
         lll_1 = np.argmax(b_1, axis =1)
@@ -425,7 +461,6 @@ class ACCURACY(Callback):
         pickle.dump((ii),open('counter', 'wb'))
         with open(text_file_name, 'a') as text_file:
           print('Epoch #{} Accuracy MNIST:{} Accuracy SVHN:{} \n'.format(ii, ACC_1, ACC_2), file=text_file)
-
 
 accuracy = ACCURACY()
 
