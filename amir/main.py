@@ -320,8 +320,7 @@ mnist_model.fit([x_train_1, y_train], [x_train_1, y_train],
         epochs=25,
         batch_size=batch_size,
         verbose=1,
-        validation_data =([x_val_1, y_val], [x_val_1, y_val]),
-        callbacks = [accuracy, reconstruction, change_lr])
+        validation_data =([x_val_1, y_val], [x_val_1, y_val]))
 
 ############################################################################
 ############################################################################
