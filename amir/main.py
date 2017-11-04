@@ -57,7 +57,7 @@ latent_dim_y = 10
 epochs = 100
 intermediate_dim = 500
 epsilon_std = 1.0
-learning_rate = 0.0003
+learning_rate = 0.001
 original_dim_1 = 784
 original_dim_2  = 32*32*3
 
@@ -290,7 +290,7 @@ def vae_loss(x, _x_decoded):
 #    kl_loss_4 = - 0.5 * K.sum(1 + _z_log_var_2_2 - K.square(_z_mean_2_2) - K.exp(_z_log_var_2_2), axis=-1)
     kl_loss_4 =  0.5 *  (K.sum(K.exp(_z_log_var_2_2)/K.exp(_z_log_var_1_2),axis = -1) + K.sum((_z_log_var_1_2- _z_mean_2_2)*(_z_log_var_1_2- _z_mean_2_2)/(K.exp(_z_log_var_1_2)),axis= -1 ) - latent_dim_y + K.sum(_z_log_var_1_2,axis=-1) -  K.sum(_z_log_var_2_2,axis=-1) )
     y_loss_1 = 10 * objectives.categorical_crossentropy(yy_1, _y_decoded_1)
-    y_loss_2 = 10000 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
+    y_loss_2 = 100 * objectives.categorical_crossentropy(yy_2, _y_decoded_2)
     return xent_loss_1 + xent_loss_2 + kl_loss_1 + kl_loss_2 + kl_loss_3 + kl_loss_4 + y_loss_1  + y_loss_2
 
 # model_1 = Model(inputs = [x_1,x_2,yy_1,yy_2], outputs = [_x_decoded_1,_x_decoded_2,_y_decoded_1,_y_decoded_2])
